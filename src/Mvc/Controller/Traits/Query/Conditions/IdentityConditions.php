@@ -119,7 +119,7 @@ trait IdentityConditions
      * @param array $data Input data (typically request params)
      * @param array|null $columns Explicit identity columns override
      *
-     * @return array|string|null
+     * @return array|null
      *  [
      *      string $condition,
      *      array $bind,
