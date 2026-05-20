@@ -47,8 +47,8 @@ class Mysql extends \Phalcon\Db\Adapter\Pdo\Mysql
             throw new \RuntimeException(
                 $e->getMessage() . ' - ' .
                 $newStatement->queryString . ' - ' .
-                json_encode($newPlaceholders) . ' - ' .
-                json_encode($newDataTypes),
+                json_encode($newPlaceholders, JSON_THROW_ON_ERROR) . ' - ' .
+                json_encode($newDataTypes, JSON_THROW_ON_ERROR),
                 (int)$e->getCode(),
                 $e
             );
