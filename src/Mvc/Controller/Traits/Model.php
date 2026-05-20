@@ -218,6 +218,9 @@ trait Model
          */
         $direction = '';
         $tokens = preg_split('/\s+/', $field);
+        if ($tokens === false) {
+            $tokens = [$field];
+        }
 
         if (count($tokens) > 1) {
             $last = strtolower(end($tokens));
@@ -276,7 +279,7 @@ trait Model
             return sprintf('[%s].[%s]%s', $modelName, $segments[0], $direction);
         }
 
-        return sprintf('[%s].[%s]%s', $segments[0], $segments[1], $direction);
+        return sprintf('[%s].[%s]%s', $segments[0], $segments[1] ?? '', $direction);
     }
     
     /**
