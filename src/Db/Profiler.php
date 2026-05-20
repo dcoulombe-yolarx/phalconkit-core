@@ -18,6 +18,7 @@ namespace PhalconKit\Db;
  */
 class Profiler extends \Phalcon\Db\Profiler
 {
+    #[\Override]
     public function getProfiles(): array
     {
         try {
@@ -27,6 +28,7 @@ class Profiler extends \Phalcon\Db\Profiler
         }
     }
 
+    #[\Override]
     public function getTotalElapsedNanoseconds(): float
     {
         try {
@@ -36,6 +38,7 @@ class Profiler extends \Phalcon\Db\Profiler
         }
     }
 
+    #[\Override]
     public function getTotalElapsedSeconds(): float
     {
         try {
@@ -65,7 +68,7 @@ class Profiler extends \Phalcon\Db\Profiler
         return [
             'profiles' => $profiles,
             'numberTotalStatements' => $this->getNumberTotalStatements(),
-            'totalElapsedSeconds' => $this->getTotalElapsedSeconds() / 1000000000,
+            'totalElapsedSeconds' => $this->getTotalElapsedSeconds() / 1000000000.0,
         ];
     }
 }
