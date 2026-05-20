@@ -14,6 +14,33 @@ For an existing Phalcon project, install the core package directly:
 composer require phalcon-kit/core
 ```
 
+New projects should use `phalcon-kit/core`. Older projects may still reference
+`zemit-cms/core`; keep those constraints pinned until you are ready to test the
+package-name migration.
+
+## Project Layout
+
+The app skeleton usually contains:
+
+```text
+app/
+  Bootstrap.php
+  Config/
+  Models/
+  Modules/
+resources/
+  migrations/
+public/
+  index.php
+loader.php
+index.php
+cli
+websocket
+```
+
+The public web root should be `public/`. Do not point a web server at the
+project root.
+
 ## Entrypoints
 
 A typical project has small entrypoints that load the optimized Phalcon loader
@@ -80,6 +107,9 @@ For public web requests, keep `public/index.php` tiny:
 require '../index.php';
 ```
 
+Keep entrypoints boring. Put application behavior in modules, controllers,
+tasks, services, and models.
+
 ## Bootstrap Class
 
 Applications normally subclass `PhalconKit\Bootstrap` and provide application
@@ -101,6 +131,12 @@ final class Bootstrap extends \PhalconKit\Bootstrap
 }
 ```
 
+Bootstrap mode controls which application runtime is created:
+
+- default mode: HTTP MVC/API runtime
+- `cli`: CLI console runtime
+- `ws`: WebSocket runtime
+
 ## Local Development
 
 For quick local experiments, PHP's built-in web server can serve the public
@@ -113,12 +149,34 @@ php -S 127.0.0.1:8000 -t public public/index.php
 Use a real web server such as Apache, Nginx, Caddy, or a containerized setup for
 shared development and production-like environments.
 
+## First Checks
+
+After installing dependencies and configuring `.env`, run:
+
+```shell
+composer validate --strict --no-check-publish
+composer phpunit
+```
+
+If the application uses database-backed models, run migrations before testing
+API resources:
+
+```shell
+./bin/migration-list.sh
+./bin/migration-run.sh
+```
+
 ## Next Steps
 
+- Understand the package layout in [Architecture](architecture.md).
 - Configure modules, providers, model aliases, permissions, and integrations in
   [Configuration](configuration.md).
 - Generate model abstracts and relationships from the database with
   [Database And Scaffolding](database-scaffolding.md).
+- Learn model behavior and eager loading in
+  [Models And Eager Loading](models-and-eager-loading.md).
 - Build model-backed APIs with [REST APIs](rest-api.md).
+- Configure roles and row-level access with
+  [Identity And Permissions](identity-and-permissions.md).
 - Configure PHP-FPM and WebSocket proxying with
   [Web Server And WebSocket](web-server-and-websocket.md).

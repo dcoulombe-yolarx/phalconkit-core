@@ -61,6 +61,10 @@ tag has been cut yet.
   future release notes current.
 - Added a simplified public README, focused project guides, support
   documentation, and updated Composer support links for docs/security metadata.
+- Added public guides for architecture, models/eager loading,
+  identity/permissions, and quality/maintenance.
+- Added a guide index with a recommended reading order and official Phalcon
+  documentation entry points.
 
 ### Changed
 
@@ -70,6 +74,9 @@ tag has been cut yet.
   logging, helpers, and AI integration.
 - Moved long-form setup, configuration, scaffolding, REST, web server, and
   release-process details out of the README and into `guides/`.
+- Expanded the existing getting-started, configuration, scaffolding, REST,
+  web-server/WebSocket, and release guides with practical commands, ownership
+  boundaries, extension points, and decision rules.
 - Clarified that `zemit-cms/core` is the historical Packagist package while
   `phalcon-kit/core` is the package name for new installations.
 - Updated contributor guidance to point at the current local docs, support

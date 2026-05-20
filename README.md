@@ -16,6 +16,15 @@ agent-ready documentation.
 The goal is simple: let the database schema and framework conventions handle
 the repetitive structure, so application code can focus on business logic.
 
+## When To Use It
+
+Use Phalcon Kit when you want a Phalcon application with a repeatable structure
+for APIs, models, permissions, CLI tasks, and long-running workers.
+
+It is especially useful for database-first applications where the schema is the
+source of truth and generated model layers should carry the repetitive column,
+relationship, and validation details.
+
 ## Install
 
 For a new application, start from the app skeleton:
@@ -73,6 +82,27 @@ for issues, support, and migration context.
 - **Agent-ready docs**: reusable Codex/agent skills that describe PhalconKit
   app and core-maintainer conventions.
 
+## Application Shape
+
+Most applications using this package follow this ownership model:
+
+```text
+app/
+  Config/             application config, providers, permissions
+  Models/             concrete business logic
+  Models/Abstracts/   generated schema layer
+  Modules/Api/        model-backed REST controllers
+  Modules/Cli/        CLI tasks
+  Modules/Ws/         WebSocket tasks
+resources/
+  migrations/         database migrations
+public/
+  index.php           web front controller
+```
+
+Generated files mirror the database. Concrete models, controllers, config
+classes, and module code remain application-owned.
+
 ## Minimal Bootstrap
 
 ```php
@@ -115,11 +145,16 @@ For a full setup, use the app skeleton or read
 
 ## Documentation
 
+- [Architecture](guides/architecture.md)
+- [Guide Index](guides/README.md)
 - [Getting Started](guides/getting-started.md)
 - [Configuration](guides/configuration.md)
 - [Database And Scaffolding](guides/database-scaffolding.md)
+- [Models And Eager Loading](guides/models-and-eager-loading.md)
 - [REST APIs](guides/rest-api.md)
+- [Identity And Permissions](guides/identity-and-permissions.md)
 - [Web Server And WebSocket](guides/web-server-and-websocket.md)
+- [Quality And Maintenance](guides/quality-and-maintenance.md)
 - [Release Process](guides/release.md)
 - [AI-Assisted Development](AI.md)
 - [Changelog](CHANGELOG.md)
@@ -160,6 +195,9 @@ Phalcon Kit ships optional agent instructions under `resources/skills/`.
 
 These assets are documentation and workflow guidance only. They do not add a
 runtime AI layer or change PHP APIs.
+
+For human-facing docs, start with `guides/`. For agent behavior and deeper
+implementation conventions, use `resources/skills/`.
 
 ## Package History
 

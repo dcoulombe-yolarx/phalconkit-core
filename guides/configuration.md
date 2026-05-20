@@ -11,6 +11,12 @@ secrets in environment files and keep application structure in code:
 - locale defaults
 - service integrations
 
+Official Phalcon references:
+
+- Config: https://docs.phalcon.io/5.13/config/
+- Dependency injection: https://docs.phalcon.io/5.13/di/
+- Routing: https://docs.phalcon.io/5.13/routing/
+
 ## Environment
 
 Example `.env` values:
@@ -23,6 +29,10 @@ DATABASE_DBNAME=app
 DATABASE_USERNAME=app
 DATABASE_PASSWORD=app
 ```
+
+Keep secrets and machine-specific paths in environment files. Keep module
+registration, providers, aliases, and policy in config classes so they can be
+reviewed and versioned.
 
 ## App Config
 
@@ -54,6 +64,31 @@ final class Config extends \PhalconKit\Bootstrap\Config
 }
 ```
 
+Use `internalMergeAppend()` when the app wants to keep PhalconKit defaults and
+append or override only the app-owned parts.
+
+## Modules
+
+Modules define runtime boundaries. Common module names are:
+
+- `frontend`
+- `admin`
+- `api`
+- `oauth2`
+- `cli`
+- `ws`
+
+Register app modules explicitly:
+
+```php
+'modules' => [
+    \PhalconKit\Mvc\Module::NAME_API => [
+        'className' => \App\Modules\Api\Module::class,
+        'path' => APP_PATH . '/Modules/Api/Module.php',
+    ],
+],
+```
+
 ## Provider Overrides
 
 Provider overrides are config-first. Replace a core provider by keeping the
@@ -67,6 +102,28 @@ as both key and value.
 
     \App\Provider\Firebase\ServiceProvider::class =>
         \App\Provider\Firebase\ServiceProvider::class,
+],
+```
+
+Common provider categories include database, cache, session, identity, ACL,
+router, request/response, logger/loggers, mailer, Redis, Swoole, OpenAI, OAuth,
+filesystem, translation, view, Volt, URL, and helpers.
+
+Use app providers when a service needs app configuration, app credentials, or a
+different implementation. Avoid replacing a core provider just to change one
+runtime option when config already supports it.
+
+## Model Aliases
+
+Applications can map framework model roles to app model classes. This keeps
+identity, permissions, and scaffolded resources decoupled from a fixed model
+namespace.
+
+```php
+'models' => [
+    'user' => \App\Models\User::class,
+    'role' => \App\Models\Role::class,
+    'workspace' => \App\Models\Workspace::class,
 ],
 ```
 
@@ -95,3 +152,6 @@ query behaviors, and roles.
 
 The identity/security system can enforce permissions across controllers,
 actions, models, methods, CLI tasks, and WebSocket tasks.
+
+For row-level controller conditions and role inheritance, read
+[Identity And Permissions](identity-and-permissions.md).

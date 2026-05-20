@@ -25,6 +25,14 @@ The scaffolder maps what can be inferred from the database:
 This keeps generated schema knowledge separate from application-owned business
 logic.
 
+Official Phalcon references:
+
+- Models: https://docs.phalcon.io/5.13/db-models/
+- Relationships: https://docs.phalcon.io/5.13/db-models-relationships/
+- Model validation: https://docs.phalcon.io/5.13/db-models-validation/
+- Migrations: https://docs.phalcon.io/5.13/db-migrations/
+- DevTools: https://docs.phalcon.io/5.13/devtools/
+
 ## Migrations
 
 Applications commonly use Phalcon DevTools migrations:
@@ -39,7 +47,33 @@ Applications commonly use Phalcon DevTools migrations:
   --log-in-db
 ```
 
-Adjust the paths for the application skeleton in use.
+Adjust the paths for the application skeleton in use. For team projects, wrap
+migration commands in `bin/` scripts so every developer uses the same config
+file, migration directory, and flags.
+
+## Scaffold Commands
+
+Generate missing model files:
+
+```shell
+./vendor/bin/phalcon-kit cli scaffold run \
+  --src-dir=app/ \
+  --namespace=App \
+  --models-extend=\\App\\Models\\AbstractModel
+```
+
+Regenerate generated layers without overwriting concrete models:
+
+```shell
+./vendor/bin/phalcon-kit cli scaffold run \
+  --src-dir=app/ \
+  --namespace=App \
+  --models-extend=\\App\\Models\\AbstractModel \
+  --force \
+  --no-models
+```
+
+Use full `--force` only when overwriting concrete model shells is intentional.
 
 ## Generated Models
 
@@ -61,6 +95,16 @@ final class Project extends Abstracts\ProjectAbstract
 }
 ```
 
+Typical generated ownership:
+
+- `Models/Abstracts/*Abstract.php`: generated columns, comments, accessors,
+  column map, relationships, and validations.
+- `Models/Abstracts/Interfaces/*AbstractInterface.php`: generated interface for
+  generated methods.
+- `Models/Interfaces/*Interface.php`: app-facing model contract.
+- `Models/Enums/`: generated enum classes.
+- `Models/*.php`: app-owned concrete behavior.
+
 ## Relationship Behavior
 
 Generated relationships are used by:
@@ -74,3 +118,29 @@ Generated relationships are used by:
 
 When a schema changes, regenerate the abstracts/interfaces and review concrete
 models for any new business logic that should be added.
+
+## Guessing Rules
+
+The scaffolder tries to infer safe conventions:
+
+- Table and column names become camelCase model properties.
+- Column maps preserve database names while app code uses camelCase.
+- `_id` columns are candidates for `belongsTo` aliases such as `UserEntity`.
+- Link/node tables are candidates for many-to-many list aliases.
+- Unique indexes become uniqueness validations.
+- DB enum columns can become PHP enum classes and inclusion validations.
+- Date, datetime, JSON, boolean, unsigned, numeric, string, and length metadata
+  can become generated validation helpers.
+
+These rules depend on database naming. If a relationship is too app-specific to
+infer safely, override it in the concrete model.
+
+## After Regeneration
+
+After a schema/scaffold pass:
+
+1. Review generated diffs.
+2. Update concrete model business logic where needed.
+3. Update REST save/filter/expose/transformer rules.
+4. Update permission conditions when new ownership fields are added.
+5. Run focused tests and then `composer qa`.
