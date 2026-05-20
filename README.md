@@ -7,92 +7,138 @@
 [![Legacy Installs](https://img.shields.io/packagist/dt/zemit-cms/core?label=legacy%20installs)](https://packagist.org/packages/zemit-cms/core)
 ![License](https://img.shields.io/packagist/l/phalcon-kit/core)
 
-Phalcon Kit Core is a modular application toolkit built on top of the
-[Phalcon PHP Framework](https://phalcon.io). It provides the framework-level
-pieces most applications need: bootstrap, configuration, service providers,
-modules, REST controllers, model behaviors, generated model scaffolding,
-permissions, identity, CLI tasks, WebSocket support, logging, helpers, and
-agent-ready documentation.
+Build Phalcon applications faster, especially REST APIs backed by a real
+database schema.
 
-The goal is simple: let the database schema and framework conventions handle
-the repetitive structure, so application code can focus on business logic.
+Phalcon Kit Core sits on top of the [Phalcon PHP Framework](https://phalcon.io)
+and gives you the application plumbing most teams write again and again:
+bootstrap, config, providers, REST controllers, model scaffolding, eager
+loading, identity, permissions, CLI tasks, WebSocket workers, logging, helpers,
+and quality tooling.
 
-## When To Use It
+You still write normal Phalcon/PHP. Phalcon Kit handles the repetitive structure
+so you can spend more time on the resource rules, business logic, and product
+behavior.
 
-Use Phalcon Kit when you want a Phalcon application with a repeatable structure
-for APIs, models, permissions, CLI tasks, and long-running workers.
+## Quick Start
 
-It is especially useful for database-first applications where the schema is the
-source of truth and generated model layers should carry the repetitive column,
-relationship, and validation details.
-
-## Install
-
-For a new application, start from the app skeleton:
+Start a new application:
 
 ```shell
-composer create-project phalcon-kit/app my-app
+composer create-project phalcon-kit/app my-api
 ```
 
-For an existing Phalcon project:
+Add the core package to an existing Phalcon application:
 
 ```shell
 composer require phalcon-kit/core
 ```
 
-New projects should use `phalcon-kit/core`. The package was previously
-distributed as [`zemit-cms/core`](https://packagist.org/packages/zemit-cms/core),
-which remains available on Packagist for historical releases and existing
-installations. If you arrived through the old package URL, use this repository
-for issues, support, and migration context.
+New projects should use `phalcon-kit/core`. Older projects may still reference
+[`zemit-cms/core`](https://packagist.org/packages/zemit-cms/core), the previous
+package name. Keep old projects pinned until you are ready to test the package
+name migration.
 
-## Requirements
+## Why Use It
 
-- PHP `>= 8.5`
-- Phalcon `^5.13`
-- Composer
-- PDO-compatible database supported by Phalcon, with MySQL 8+ used by the core
-  test and scaffold baseline
-- Recommended extensions for common applications: APCu, Redis, Swoole, Opcache,
-  IMAP, sockets, SimpleXML, and GD
+Use Phalcon Kit when you want Phalcon's speed and low-level control, but you do
+not want every project to re-invent the same API and model infrastructure.
 
-## What It Provides
+It is useful when you need to:
 
-- **Config-first bootstrap**: compose modules, providers, model aliases,
-  permissions, router defaults, locale, and integrations through configuration.
-- **Service providers**: register core services for config, request/response,
-  database, cache, session, identity, logging, mail, OAuth, OpenAI, Redis,
-  Swoole, and more.
-- **Identity and permissions**: JWT/session identity, impersonation,
-  role inheritance, ACL checks, and config-defined permission policies for
-  controllers, actions, models, CLI tasks, and WebSocket tasks.
-- **REST controller conventions**: model-backed APIs with save fields, filter
-  fields, search fields, joins, dynamic joins, exposers, transformers,
-  eager-loading, and row-level permission conditions.
-- **Database-first scaffolding**: generate abstract models, interfaces,
-  comments, typed accessors, column maps, relationships, validations, enum
-  classes, and model tests from the real database schema.
-- **Relationship-aware models**: work with single-to-many and many-to-many
-  payloads, nested validation messages, soft-delete-aware relation updates, and
-  generated aliases.
-- **Batch eager loading**: use `findWith()`, `findFirstWith()`, controller
-  `initializeWith()`, and relation-level query builders instead of lazy-loading
-  loops.
-- **Tooling and quality gates**: PHPUnit, Psalm, Psalm taint analysis, PHPStan,
-  PHPCS, Composer audit, package skeleton checks, and generated API docs.
-- **Agent-ready docs**: reusable Codex/agent skills that describe PhalconKit
-  app and core-maintainer conventions.
+- turn database tables into typed Phalcon models;
+- expose model-backed REST resources quickly;
+- save nested one-to-many or many-to-many payloads;
+- filter, search, sort, paginate, and eager-load relations consistently;
+- restrict rows by user, role, project, workspace, tenant, or ownership rules;
+- use JWT/session identity, impersonation, and role-based access control;
+- keep CLI, WebSocket, API, and web modules on the same bootstrap/config;
+- let generated model code track the database while concrete models stay clean.
+
+## From Database To API
+
+The usual workflow is:
+
+1. Create or update the database schema.
+2. Run migrations.
+3. Run the scaffolder.
+4. Add business logic to concrete models.
+5. Add a small REST controller that declares save/filter/search/eager-load
+   policy.
+
+Example resource controller:
+
+```php
+<?php
+
+namespace App\Modules\Api\Controllers;
+
+use Phalcon\Support\Collection;
+
+final class ProjectController extends AbstractController
+{
+    public function initializeSaveFields(): void
+    {
+        $this->setSaveFields(new Collection([
+            'label',
+            'status',
+            'usernode' => [
+                'userId',
+                'type',
+                'deleted',
+            ],
+        ]));
+    }
+
+    public function initializeFilterFields(): void
+    {
+        $this->setFilterFields(new Collection([
+            'id',
+            'label',
+            'status',
+            'UserNode.userId',
+            'UserNode.type',
+            'deleted',
+        ]));
+    }
+
+    public function initializeWith(): void
+    {
+        $this->setWith(new Collection([
+            'UserNode.UserEntity',
+        ]));
+    }
+}
+```
+
+That controller participates in the standard REST flow: list/detail lookup,
+save/create/update, delete/restore, filter/search/order/limit handling, relation
+assignment, exposers or transformers, eager loading, and permission conditions.
+
+See the [Resource Walkthrough](guides/resource-walkthrough.md) for the complete
+schema-to-controller example.
+
+## What You Write
+
+| You write | Phalcon Kit handles |
+| --- | --- |
+| Database schema and migrations | Generated model abstracts, accessors, column maps, validations, relationships |
+| Concrete model behavior | Shared model base, behaviors, soft delete, UUIDs, slug, blameable fields |
+| REST resource policy | Request parsing, filtering, searching, saving, exposing, eager loading |
+| Permission config and row rules | ACL expansion, role inheritance, controller/model/task checks |
+| Transformers for complex output | Fractal manager helpers and relation-loaded includes |
+| CLI/WebSocket task logic | Shared bootstrap, DI services, config, identity context |
 
 ## Application Shape
 
-Most applications using this package follow this ownership model:
+Most applications using this package follow this shape:
 
 ```text
 app/
-  Config/             application config, providers, permissions
+  Config/             app config, providers, permissions
   Models/             concrete business logic
   Models/Abstracts/   generated schema layer
-  Modules/Api/        model-backed REST controllers
+  Modules/Api/        REST controllers
   Modules/Cli/        CLI tasks
   Modules/Ws/         WebSocket tasks
 resources/
@@ -101,79 +147,35 @@ public/
   index.php           web front controller
 ```
 
-Generated files mirror the database. Concrete models, controllers, config
-classes, and module code remain application-owned.
+Generated files mirror the database. Your concrete models, controllers, config,
+services, transformers, and tasks remain application-owned.
 
-## Minimal Bootstrap
+## Requirements
 
-```php
-<?php
+- PHP `>= 8.5`
+- Phalcon `^5.13`
+- Composer
+- A PDO-compatible database supported by Phalcon
+- MySQL 8+ for the core test/scaffold baseline
 
-use Phalcon\Autoload\Loader;
+Recommended extensions for common applications: APCu, Redis, Swoole, Opcache,
+IMAP, sockets, SimpleXML, and GD.
 
-const APP_NAMESPACE = 'App';
-const ROOT_PATH = __DIR__ . '/';
-const VENDOR_PATH = ROOT_PATH . 'vendor/';
-const APP_PATH = ROOT_PATH . 'app/';
+## Learn By Task
 
-$loader = new Loader();
-$loader->setFiles([VENDOR_PATH . 'autoload.php']);
-$loader->setNamespaces([APP_NAMESPACE => APP_PATH]);
-$loader->setFileCheckingCallback(null);
-$loader->register();
+- Build your first resource: [Resource Walkthrough](guides/resource-walkthrough.md)
+- Start a project: [Getting Started](guides/getting-started.md)
+- Configure modules and providers: [Configuration](guides/configuration.md)
+- Generate models from a database: [Database And Scaffolding](guides/database-scaffolding.md)
+- Avoid N+1 queries: [Models And Eager Loading](guides/models-and-eager-loading.md)
+- Build model-backed APIs: [REST APIs](guides/rest-api.md)
+- Add roles and row-level access: [Identity And Permissions](guides/identity-and-permissions.md)
+- Deploy behind PHP-FPM or WebSocket proxying: [Web Server And WebSocket](guides/web-server-and-websocket.md)
+- Run checks before release: [Quality And Maintenance](guides/quality-and-maintenance.md)
 
-echo (new App\Bootstrap())->run();
-```
+The full guide index is in [guides/README.md](guides/README.md).
 
-```php
-<?php
-
-namespace App;
-
-use App\Config\Config;
-
-final class Bootstrap extends \PhalconKit\Bootstrap
-{
-    public function initialize(): void
-    {
-        $this->setConfig(new Config());
-    }
-}
-```
-
-For a full setup, use the app skeleton or read
-[Getting Started](guides/getting-started.md).
-
-## Documentation
-
-- [Architecture](guides/architecture.md)
-- [Guide Index](guides/README.md)
-- [Getting Started](guides/getting-started.md)
-- [Configuration](guides/configuration.md)
-- [Database And Scaffolding](guides/database-scaffolding.md)
-- [Models And Eager Loading](guides/models-and-eager-loading.md)
-- [REST APIs](guides/rest-api.md)
-- [Identity And Permissions](guides/identity-and-permissions.md)
-- [Resource Walkthrough](guides/resource-walkthrough.md)
-- [Web Server And WebSocket](guides/web-server-and-websocket.md)
-- [Quality And Maintenance](guides/quality-and-maintenance.md)
-- [Release Process](guides/release.md)
-- [AI-Assisted Development](AI.md)
-- [Changelog](CHANGELOG.md)
-- [Security Policy](SECURITY.md)
-- [Support](SUPPORT.md)
-- [Contributing](CONTRIBUTING.md)
-
-Generated API documentation is produced with:
-
-```shell
-composer docs
-```
-
-The generated output is local build output and is not the primary public
-documentation source.
-
-## Quality Gates
+## For Contributors
 
 ```shell
 composer qa
@@ -183,32 +185,20 @@ composer qa:test
 composer qa:style
 ```
 
-`composer qa` is the full maintainer gate. Run focused commands while
-developing, then run the full gate before opening a pull request.
+See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and
+[CHANGELOG.md](CHANGELOG.md) before opening a pull request.
 
 ## AI-Assisted Development
 
-Phalcon Kit ships optional agent instructions under `resources/skills/`.
-
-- `resources/skills/phalconkit-app-developer` helps agents work inside
-  applications using PhalconKit.
-- `resources/skills/phalconkit-core-maintainer` helps agents modify this core
-  package safely.
-
-These assets are documentation and workflow guidance only. They do not add a
-runtime AI layer or change PHP APIs.
-
-For human-facing docs, start with `guides/`. For agent behavior and deeper
-implementation conventions, use `resources/skills/`.
+Phalcon Kit includes optional agent instructions under `resources/skills/`.
+They help AI coding agents follow the same PhalconKit conventions documented in
+the human-facing guides. They do not add runtime AI behavior or change PHP APIs.
 
 ## Package History
 
-Phalcon Kit Core is the continuation of the package formerly known as
-`zemit-cms/core`. The old Packagist package keeps the historical install count
-and legacy versions for existing users, while new installations should use
-`phalcon-kit/core`. Keep old projects on their pinned constraints until you are
-ready to upgrade, then migrate the package name during the normal dependency
-update cycle.
+Phalcon Kit Core continues the package formerly known as `zemit-cms/core`.
+Existing projects can stay on pinned legacy constraints until migration is
+planned. New installations should use `phalcon-kit/core`.
 
 ## License
 

@@ -1,6 +1,9 @@
-# Database And Scaffolding
+# Generate Models From Your Database
 
-PhalconKit is database-first. The usual flow is:
+PhalconKit is database-first. You design the database, then let the scaffolder
+write the repetitive model layer.
+
+The usual flow is:
 
 1. Design or update the database schema.
 2. Run migrations.
@@ -8,7 +11,7 @@ PhalconKit is database-first. The usual flow is:
 4. Keep generated structure in abstract models and interfaces.
 5. Put business logic in concrete application models.
 
-The scaffolder maps what can be inferred from the database:
+The scaffolder maps what can be inferred from the real database:
 
 - model classes
 - abstract model classes
@@ -22,8 +25,8 @@ The scaffolder maps what can be inferred from the database:
 - enum classes
 - model tests
 
-This keeps generated schema knowledge separate from application-owned business
-logic.
+That gives you typed model structure quickly while keeping business logic in
+concrete app models.
 
 Official Phalcon references:
 
@@ -33,7 +36,7 @@ Official Phalcon references:
 - Migrations: https://docs.phalcon.io/5.13/db-migrations/
 - DevTools: https://docs.phalcon.io/5.13/devtools/
 
-## Migrations
+## 1. Run Migrations
 
 Applications commonly use Phalcon DevTools migrations:
 
@@ -51,7 +54,7 @@ Adjust the paths for the application skeleton in use. For team projects, wrap
 migration commands in `bin/` scripts so every developer uses the same config
 file, migration directory, and flags.
 
-## Scaffold Commands
+## 2. Run The Scaffolder
 
 Generate missing model files:
 
@@ -75,7 +78,7 @@ Regenerate generated layers without overwriting concrete models:
 
 Use full `--force` only when overwriting concrete model shells is intentional.
 
-## Generated Models
+## 3. Add Business Logic To Concrete Models
 
 Generated abstract classes should be treated as schema output. Concrete models
 extend them and contain the application-specific methods, custom behaviors, and
@@ -105,7 +108,7 @@ Typical generated ownership:
 - `Models/Enums/`: generated enum classes.
 - `Models/*.php`: app-owned concrete behavior.
 
-## Relationship Behavior
+## 4. Use Generated Relationships
 
 Generated relationships are used by:
 
@@ -119,7 +122,7 @@ Generated relationships are used by:
 When a schema changes, regenerate the abstracts/interfaces and review concrete
 models for any new business logic that should be added.
 
-## Guessing Rules
+## What The Scaffolder Guesses
 
 The scaffolder tries to infer safe conventions:
 
@@ -135,7 +138,7 @@ The scaffolder tries to infer safe conventions:
 These rules depend on database naming. If a relationship is too app-specific to
 infer safely, override it in the concrete model.
 
-## After Regeneration
+## 5. Review Connected API Code
 
 After a schema/scaffold pass:
 

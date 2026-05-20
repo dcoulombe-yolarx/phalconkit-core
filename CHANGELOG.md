@@ -70,6 +70,8 @@ tag has been cut yet.
   permission config.
 - Added concrete provider, eager-loading, transformer-backed action, and
   advanced filter examples to the public guides.
+- Reframed the public README and guides around user tasks, faster Phalcon REST
+  API development, and schema-to-resource how-to workflows.
 
 ### Changed
 

@@ -1,33 +1,54 @@
 # Getting Started
 
-Use the `phalcon-kit/app` skeleton for new applications whenever possible. It
-contains the recommended directory structure, entrypoints, environment files,
-default modules, and configuration examples.
+This guide gets you from install to a runnable PhalconKit application. If your
+main goal is a REST API, read this first and then continue with the
+[Resource Walkthrough](resource-walkthrough.md).
+
+## 1. Create Or Install
+
+For a new application:
 
 ```shell
-composer create-project phalcon-kit/app my-app
+composer create-project phalcon-kit/app my-api
+cd my-api
 ```
 
-For an existing Phalcon project, install the core package directly:
+For an existing Phalcon application:
 
 ```shell
 composer require phalcon-kit/core
 ```
 
-New projects should use `phalcon-kit/core`. Older projects may still reference
-`zemit-cms/core`; keep those constraints pinned until you are ready to test the
-package-name migration.
+Use `phalcon-kit/core` for new projects. The old `zemit-cms/core` package name
+exists only for historical projects and pinned legacy installs.
 
-## Project Layout
+## 2. Configure The Environment
 
-The app skeleton usually contains:
+Create or update `.env`:
+
+```ini
+APP_NAME="My API"
+
+DATABASE_HOST=127.0.0.1
+DATABASE_DBNAME=my_api
+DATABASE_USERNAME=my_api
+DATABASE_PASSWORD=secret
+```
+
+The app config reads environment values and registers modules, providers,
+aliases, permissions, and integrations. Keep secrets in `.env`; keep structure
+in `app/Config`.
+
+## 3. Check The Project Shape
+
+A normal app has a small bootstrap and clear ownership boundaries:
 
 ```text
 app/
   Bootstrap.php
   Config/
   Models/
-  Modules/
+  Modules/Api/
 resources/
   migrations/
 public/
@@ -38,32 +59,50 @@ cli
 websocket
 ```
 
-The public web root should be `public/`. Do not point a web server at the
-project root.
+Point the web server at `public/`, not the project root.
 
-## Entrypoints
+## 4. Run Locally
 
-A typical project has small entrypoints that load the optimized Phalcon loader
-and then run the application bootstrap.
+For a quick local test:
 
-```php
-<?php
-
-use Phalcon\Autoload\Loader;
-
-const APP_NAMESPACE = 'App';
-const ROOT_PATH = __DIR__ . '/';
-const VENDOR_PATH = ROOT_PATH . 'vendor/';
-const APP_PATH = ROOT_PATH . 'app/';
-
-$loader = new Loader();
-$loader->setFiles([VENDOR_PATH . 'autoload.php']);
-$loader->setNamespaces([APP_NAMESPACE => APP_PATH]);
-$loader->setFileCheckingCallback(null);
-$loader->register();
-
-return $loader;
+```shell
+php -S 127.0.0.1:8000 -t public public/index.php
 ```
+
+For production-like development, use PHP-FPM behind Nginx, Apache, Caddy, or a
+container proxy. See [Web Server And WebSocket](web-server-and-websocket.md).
+
+## 5. Verify Tooling
+
+After installing dependencies:
+
+```shell
+composer validate --strict --no-check-publish
+composer phpunit
+```
+
+If the application uses the database:
+
+```shell
+./bin/migration-list.sh
+./bin/migration-run.sh
+```
+
+## 6. Build The First API Resource
+
+The fastest path is:
+
+1. Create the table.
+2. Run migrations.
+3. Run the scaffolder.
+4. Add a model-backed API controller.
+5. Configure permissions.
+
+The full example is in [Resource Walkthrough](resource-walkthrough.md).
+
+## Useful Entrypoints
+
+Web entrypoint:
 
 ```php
 <?php
@@ -75,7 +114,7 @@ require 'loader.php';
 echo (new Bootstrap())->run();
 ```
 
-CLI and WebSocket entrypoints use the same bootstrap with an explicit mode:
+CLI entrypoint:
 
 ```php
 #!/usr/bin/env php
@@ -88,6 +127,8 @@ require 'loader.php';
 echo (new Bootstrap('cli'))->run();
 ```
 
+WebSocket entrypoint:
+
 ```php
 #!/usr/bin/env php
 <?php
@@ -99,84 +140,10 @@ require 'loader.php';
 echo (new Bootstrap('ws'))->run();
 ```
 
-For public web requests, keep `public/index.php` tiny:
-
-```php
-<?php
-
-require '../index.php';
-```
-
-Keep entrypoints boring. Put application behavior in modules, controllers,
-tasks, services, and models.
-
-## Bootstrap Class
-
-Applications normally subclass `PhalconKit\Bootstrap` and provide application
-configuration.
-
-```php
-<?php
-
-namespace App;
-
-use App\Config\Config;
-
-final class Bootstrap extends \PhalconKit\Bootstrap
-{
-    public function initialize(): void
-    {
-        $this->setConfig(new Config());
-    }
-}
-```
-
-Bootstrap mode controls which application runtime is created:
-
-- default mode: HTTP MVC/API runtime
-- `cli`: CLI console runtime
-- `ws`: WebSocket runtime
-
-## Local Development
-
-For quick local experiments, PHP's built-in web server can serve the public
-front controller:
-
-```shell
-php -S 127.0.0.1:8000 -t public public/index.php
-```
-
-Use a real web server such as Apache, Nginx, Caddy, or a containerized setup for
-shared development and production-like environments.
-
-## First Checks
-
-After installing dependencies and configuring `.env`, run:
-
-```shell
-composer validate --strict --no-check-publish
-composer phpunit
-```
-
-If the application uses database-backed models, run migrations before testing
-API resources:
-
-```shell
-./bin/migration-list.sh
-./bin/migration-run.sh
-```
-
 ## Next Steps
 
-- Understand the package layout in [Architecture](architecture.md).
-- Configure modules, providers, model aliases, permissions, and integrations in
-  [Configuration](configuration.md).
-- Generate model abstracts and relationships from the database with
-  [Database And Scaffolding](database-scaffolding.md).
-- Learn model behavior and eager loading in
-  [Models And Eager Loading](models-and-eager-loading.md).
-- Build model-backed APIs with [REST APIs](rest-api.md).
-- Configure roles and row-level access with
-  [Identity And Permissions](identity-and-permissions.md).
-- Configure PHP-FPM and WebSocket proxying with
-  [Web Server And WebSocket](web-server-and-websocket.md).
+- [Resource Walkthrough](resource-walkthrough.md): build a complete resource.
+- [Configuration](configuration.md): configure modules, providers, aliases, and
+  permissions.
+- [Database And Scaffolding](database-scaffolding.md): generate model layers.
+- [REST APIs](rest-api.md): configure resource controllers.

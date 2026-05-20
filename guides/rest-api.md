@@ -1,8 +1,11 @@
 # REST APIs
 
-PhalconKit REST controllers are model-backed and convention-driven. Controllers
-usually configure which fields can be saved, filtered, searched, exposed, and
-eager loaded.
+PhalconKit helps you build model-backed REST APIs without writing the same
+controller plumbing for every table.
+
+You declare what the resource allows. The framework handles request parameters,
+query compilation, save payloads, relation loading, response formatting,
+permission conditions, and common REST actions.
 
 Official Phalcon references:
 
@@ -11,19 +14,28 @@ Official Phalcon references:
 - Response: https://docs.phalcon.io/5.13/response/
 - PHQL: https://docs.phalcon.io/5.13/db-phql/
 
-## Rest vs Restful
+## What You Get
 
-Use `PhalconKit\Mvc\Controller\Rest` for custom JSON endpoints that do not need
-the model-backed query/action stack.
+A model-backed resource can expose standard actions such as:
 
-Use `PhalconKit\Mvc\Controller\Restful` through the app API base controller for
-model resources that need standard find, find-with, find-first, save, delete,
-restore, aggregate, export, filter, search, permission, and eager-loading
-behavior.
+```text
+/api/project/find
+/api/project/find-with
+/api/project/find-first
+/api/project/find-first-with
+/api/project/save
+/api/project/create
+/api/project/update
+/api/project/delete
+/api/project/restore
+```
 
-Do not extend the model-backed controller just to return JSON.
+Exact URLs depend on your route configuration, but the pattern is the same:
+controller actions map to resource operations.
 
-## Controller Example
+## Build A Resource Controller
+
+Start with the app API base controller and declare the resource policy:
 
 ```php
 <?php
@@ -38,7 +50,6 @@ final class ProjectController extends AbstractController
     {
         $this->setSaveFields(new Collection([
             'label',
-            'description',
             'status',
             'usernode' => [
                 'userId',
@@ -54,9 +65,18 @@ final class ProjectController extends AbstractController
             'id',
             'label',
             'status',
-            'createdAt',
-            'updatedAt',
+            'UserNode.userId',
+            'UserNode.type',
             'deleted',
+        ]));
+    }
+
+    public function initializeSearchFields(): void
+    {
+        $this->setSearchFields(new Collection([
+            'id',
+            'label',
+            'status',
         ]));
     }
 
@@ -69,86 +89,101 @@ final class ProjectController extends AbstractController
 }
 ```
 
-## Controller Checklist
+This small controller tells PhalconKit:
 
-For each resource, decide these independently:
+- which fields can be written;
+- which fields can be filtered;
+- which fields participate in text search;
+- which relations should load with `find-with` and `find-first-with`;
+- which nested relation payloads can be saved.
 
-- save fields
-- filter fields
-- search fields
-- expose fields
-- map fields
-- eager-loaded relations
-- joins and dynamic joins
-- permission conditions
-- default order, limit, and max limit
-- exposer or transformer output
+## Keep Policies Separate
 
-A field can be filterable but not writable, writable but not exposed, or
-exposed only through a transformer.
+Do not use one field list for everything. A real API usually needs different
+rules:
 
-## Exposers And Transformers
+- `save fields`: client may write these.
+- `filter fields`: client may query these.
+- `search fields`: broad text search uses these.
+- `expose fields`: response may include these.
+- `with`: relations that should be eager loaded.
+- `joins`: relations needed for filtering, ordering, or permission checks.
+- `permission conditions`: rows the current identity may access.
 
-The exposer system is easy to use and works well for straightforward model
-output. Transformers are better when response shape, nested resources, and
-performance need tighter control.
+This keeps public API behavior explicit and reviewable.
 
-Use transformers for complex API resources and exposers for simpler CRUD
-surfaces.
+## Save Nested Payloads
 
-Transformer-backed output is usually the better choice when:
+If the generated model has a relation alias such as `UserNode`, you can allow a
+nested save payload:
 
-- relation graphs are deep
-- a list endpoint must be fast
-- output names differ from model property names
-- nested resources need conditional includes
-- external clients depend on a stable response contract
+```json
+{
+  "label": "Systematic Review 2026",
+  "status": "active",
+  "usernode": [
+    {
+      "userId": 10,
+      "type": "leader"
+    },
+    {
+      "userId": 11,
+      "type": "member"
+    }
+  ]
+}
+```
 
-## Query Features
+The controller decides which nested fields are accepted. The model layer handles
+relationship assignment, validation messages, and save behavior.
 
-REST controllers can compose:
+## Filter On Related Data
 
-- search fields
-- filter fields
-- save fields
-- expose fields
-- map fields
-- joins
-- dynamic joins
-- eager loading
-- permission conditions
-- soft-delete conditions
-- group/order/limit/offset handling
-
-These traits let app controllers keep the resource-specific rules close to the
-resource, without rewriting query plumbing for each endpoint.
-
-## Joins And Dynamic Joins
-
-Use static joins when a resource always needs a relation for filtering, sorting,
-or permission checks:
+Use joins when filters or ordering depend on related tables:
 
 ```php
 public function initializeJoins(): void
 {
     $this->setJoins(new Collection([
-        'Project' => [
-            \App\Models\Project::class,
-            '[' . $this->getModelName() . '].[projectId] = [Project].[id]',
-            'Project',
+        'UserNode' => [
+            \App\Models\ProjectUser::class,
+            '[' . $this->getModelName() . '].[id] = [UserNode].[projectId]',
+            'UserNode',
             'left',
         ],
     ]));
 }
 ```
 
-Use dynamic joins for filter/search paths that should join only when a client
-uses the related field. This keeps normal list requests lighter.
+Use dynamic joins when only some filter/search paths need the join. That keeps
+normal list requests lighter.
 
-## Transformer-Backed Action Example
+## Restrict Rows By User Or Role
 
-For heavy resources, use the controller Fractal helpers directly and keep the
-response contract in transformers:
+Feature permissions decide whether a role can use a controller/action. Row-level
+conditions decide which records that role can access.
+
+```php
+public function initializePermissionConditions(): void
+{
+    parent::initializePermissionConditions();
+
+    if (!$this->identity->hasRole($this->getSuperRoles())) {
+        $this->getPermissionConditions()->set(
+            'projectId',
+            $this->getProjectIdPermissionCondition('id')
+        );
+    }
+}
+```
+
+This is where you enforce project, workspace, tenant, ownership, or assignment
+scoping.
+
+## Use Transformers For Stable Responses
+
+Exposers are fast to configure for simple CRUD. Transformers are better for
+external APIs or complex nested data.
 
 ```php
 use App\Modules\Api\Transformers\ProjectTransformer;
@@ -172,37 +207,12 @@ public function dashboardAction(): ResponseInterface
 }
 ```
 
-This is useful when the default exposer output is too broad, too nested, or not
-stable enough for an external client.
+Use transformers when response shape, field names, includes, or performance
+need tighter control than a simple expose list.
 
-## Permission Conditions
+## Advanced Conditions
 
-Controllers can add row-level restrictions based on the current identity:
-
-```php
-public function initializePermissionConditions(): void
-{
-    parent::initializePermissionConditions();
-
-    $this->getPermissionConditions()->set(
-        'projectId',
-        $this->getProjectIdPermissionCondition('projectId')
-    );
-}
-```
-
-Permission behavior is usually paired with config-defined feature/role policy.
-
-## Advanced Filters
-
-For complex resources, keep advanced filter semantics isolated in a trait or
-private methods. Build condition blocks with unique bind keys and explicit bind
-types. Prefer `EXISTS` subqueries for set logic when joins would multiply rows.
-
-Use `setWith()` for data that must be returned, and joins/dynamic joins for data
-that must be queried.
-
-Example condition block:
+For set logic, `EXISTS` often avoids duplicate rows from joins:
 
 ```php
 $key = $this->generateBindKey('assigned_user_id');
@@ -225,3 +235,14 @@ $this->getConditions()->set('assigned_user', [
     ],
 ]);
 ```
+
+Keep advanced filter logic in private methods or traits so the controller stays
+readable.
+
+## Rest vs Restful
+
+Use `PhalconKit\Mvc\Controller\Rest` for custom JSON endpoints such as health
+checks, webhooks, dashboards, and workflows that are not plain model resources.
+
+Use the app API base controller backed by `Restful` for normal CRUD/query
+resources. Do not extend the model-backed controller just to return JSON.

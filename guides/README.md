@@ -1,22 +1,42 @@
 # Guides
 
-These guides are the human-facing documentation for Phalcon Kit Core. They are
-short by design and point to the extension points most application developers
-and maintainers need first.
+These guides are for developers who want to build Phalcon applications faster
+with Phalcon Kit. Start with the task you are trying to complete.
 
-## Reading Order
+## I Want To Build A REST API
 
-1. [Architecture](architecture.md)
-2. [Getting Started](getting-started.md)
-3. [Configuration](configuration.md)
-4. [Database And Scaffolding](database-scaffolding.md)
-5. [Models And Eager Loading](models-and-eager-loading.md)
-6. [REST APIs](rest-api.md)
-7. [Identity And Permissions](identity-and-permissions.md)
-8. [Resource Walkthrough](resource-walkthrough.md)
-9. [Web Server And WebSocket](web-server-and-websocket.md)
-10. [Quality And Maintenance](quality-and-maintenance.md)
-11. [Release Process](release.md)
+1. [Resource Walkthrough](resource-walkthrough.md): build a resource from schema
+   to controller and permissions.
+2. [REST APIs](rest-api.md): learn the REST controller policy methods.
+3. [Models And Eager Loading](models-and-eager-loading.md): load relation graphs
+   without lazy-loading loops.
+4. [Identity And Permissions](identity-and-permissions.md): add role and
+   row-level access.
+
+## I Want To Start Or Integrate A Project
+
+1. [Getting Started](getting-started.md): install, bootstrap, run locally.
+2. [Configuration](configuration.md): configure modules, providers, aliases, and
+   permissions.
+3. [Architecture](architecture.md): understand where app code, generated code,
+   modules, and tasks belong.
+
+## I Want To Generate Models From A Database
+
+1. [Database And Scaffolding](database-scaffolding.md): run migrations and
+   scaffold generated model layers.
+2. [Models And Eager Loading](models-and-eager-loading.md): add concrete model
+   behavior and relationship loading.
+3. [Resource Walkthrough](resource-walkthrough.md): connect generated models to
+   a REST controller.
+
+## I Want To Deploy Or Maintain The Package
+
+1. [Web Server And WebSocket](web-server-and-websocket.md): PHP-FPM, web roots,
+   and WebSocket worker proxying.
+2. [Quality And Maintenance](quality-and-maintenance.md): local QA commands and
+   CI expectations.
+3. [Release Process](release.md): release checklist and package-history notes.
 
 ## Official Phalcon Docs
 
@@ -28,6 +48,6 @@ docs for native framework behavior and these guides for PhalconKit conventions.
 
 ## Agent References
 
-Agent-specific instructions live under `resources/skills/`. Those files are
-more detailed and procedural because they are meant to guide AI coding agents.
-Human readers should usually start here in `guides/`.
+Agent-specific instructions live under `resources/skills/`. Human readers
+should start here in `guides/`; agents can use the skills for stricter coding
+rules and deeper implementation conventions.

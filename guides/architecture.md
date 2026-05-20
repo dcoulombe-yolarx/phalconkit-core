@@ -1,9 +1,8 @@
-# Architecture
+# How Phalcon Kit Organizes Your App
 
-Phalcon Kit is a convention layer over Phalcon. It keeps native Phalcon
-concepts visible while adding reusable structure for bootstrap, configuration,
-providers, models, REST controllers, identity, CLI, WebSocket workers, and
-maintainer tooling.
+Phalcon Kit gives a Phalcon application a repeatable shape. The point is not to
+hide Phalcon. The point is to make the common decisions once so each project can
+focus on its models, API resources, workflows, and permissions.
 
 Official Phalcon references:
 
@@ -13,7 +12,7 @@ Official Phalcon references:
 - Routing: https://docs.phalcon.io/5.13/routing/
 - Models: https://docs.phalcon.io/5.13/db-models/
 
-## Runtime Flow
+## Request Flow
 
 A normal HTTP request follows this shape:
 
@@ -31,12 +30,13 @@ new Bootstrap('cli');
 new Bootstrap('ws');
 ```
 
-That keeps service configuration, identity rules, model aliases, and providers
-consistent across HTTP, CLI, and WebSocket contexts.
+That means your API controllers, CLI tasks, and WebSocket tasks can use the same
+database services, identity rules, model aliases, logger, and app config.
 
-## Ownership Boundaries
+## Where To Put Code
 
-Keep generated framework structure and application logic separate:
+The most important rule is simple: generated code mirrors the database; app code
+owns behavior.
 
 - `Config/`: app-owned configuration, provider overrides, permissions, modules,
   aliases, and integrations.
@@ -50,24 +50,25 @@ Keep generated framework structure and application logic separate:
 - `Modules/Ws/Tasks/`: WebSocket task handlers.
 - `resources/migrations/`: database migration history.
 
-Do not put domain rules in generated abstracts. Put them in concrete models,
-controllers, services, validators, or app config.
+For example, if the `project` table gains a `status` column, regenerate the
+abstract model so accessors and validation match the database. If the app needs
+`Project::archive()`, write that method in the concrete `Project` model.
 
-## Extension Points
+## Common Customizations
 
-Common extension points are:
+Most real apps customize these pieces:
 
 - Config classes extending `PhalconKit\Bootstrap\Config`.
 - Service providers extending `PhalconKit\Provider\AbstractServiceProvider`.
 - Concrete models extending generated abstract models.
 - API controllers extending the app API base controller.
 - Permission config classes merged into the app config.
-- Fractal transformers for complex API output.
+- Fractal transformers for stable API output.
 - Model behaviors for reusable lifecycle logic.
 
 Prefer app-owned extensions over editing vendor code or generated files.
 
-## Native Phalcon First
+## Still Normal Phalcon
 
 When unsure, start from the native Phalcon concept:
 

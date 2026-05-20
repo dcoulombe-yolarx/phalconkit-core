@@ -1,8 +1,10 @@
-# Resource Walkthrough
+# Build A Resource From Schema To REST API
 
-This walkthrough shows how a normal database-backed API resource fits together:
-schema, scaffold, concrete model logic, REST controller policy, transformer
-output, and permissions.
+This walkthrough shows the main reason to use PhalconKit: go from a database
+schema to a model-backed REST resource without writing the same plumbing again.
+
+You will see the moving parts together: schema, scaffold, concrete model logic,
+REST controller policy, transformer output, and permissions.
 
 The example uses a small project-management resource:
 
@@ -276,7 +278,7 @@ Feature access and row-level access are deliberately separate. The config says
 which components a role may use; `initializePermissionConditions()` scopes the
 records returned by the resource.
 
-## 7. Use The Resource
+## 7. Call The Resource
 
 Exact URLs depend on the application route configuration. With default module
 routes, the action names map to the API controller actions:
@@ -292,7 +294,7 @@ routes, the action names map to the API controller actions:
 /api/project/delete
 ```
 
-Example create payload:
+Example create payload for `/api/project/create` or `/api/project/save`:
 
 ```json
 {
@@ -310,6 +312,19 @@ Example create payload:
   ]
 }
 ```
+
+## What You Got
+
+With this setup, the resource has:
+
+- generated model accessors, validation, and relationships;
+- concrete model methods for business rules;
+- REST list/detail/save behavior;
+- nested relation writes through `usernode`;
+- eager-loaded user information for `find-with` responses;
+- transformer-ready output for stable API contracts;
+- role policy in config;
+- row-level project scoping in the controller.
 
 ## 8. Review After Each Schema Change
 
