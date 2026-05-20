@@ -25,6 +25,7 @@ Start with the app's Composer scripts:
 ```bash
 composer phpunit
 composer psalm
+composer psalm:taint
 composer phpcs
 composer skeleton
 ```
@@ -32,7 +33,8 @@ composer skeleton
 Common core package scripts are:
 
 - `composer phpunit`
-- `composer psalm`
+- `composer psalm` for normal static analysis
+- `composer psalm:taint` for taint analysis when configured
 - `composer php-cs-fixer`
 - `composer phpcs`
 - `composer phpcbf`

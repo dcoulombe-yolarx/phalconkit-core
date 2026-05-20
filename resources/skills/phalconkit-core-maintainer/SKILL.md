@@ -40,7 +40,8 @@ README, `AI.md`, or other AI-facing documentation.
 ## Common Validation
 
 - `composer phpunit` runs unit tests.
-- `composer psalm` runs Psalm with taint analysis.
+- `composer psalm` runs normal Psalm static analysis.
+- `composer psalm:taint` runs Psalm taint analysis.
 - `composer phpcs` checks coding standards.
 - `composer skeleton` validates package skeleton rules.
 - `git diff --check` catches whitespace errors.

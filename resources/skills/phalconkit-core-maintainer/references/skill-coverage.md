@@ -123,7 +123,7 @@ Use supportable trust signals:
 
 - CI status badge.
 - Unit tests under `tests/Unit`.
-- Composer validation scripts: `phpunit`, `psalm`, `phpcs`, `skeleton`.
+- Composer validation scripts: `phpunit`, `psalm`, `psalm:taint`, `phpcs`, `skeleton`.
 - Pre-configured providers and modules.
 - Real app conventions captured in reusable skills.
 - Generated API docs and official documentation site.

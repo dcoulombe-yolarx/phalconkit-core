@@ -136,6 +136,7 @@ PhalconKit wrappers:
 
 - `composer phpunit`
 - `composer psalm`
+- `composer psalm:taint`
 - `composer phpcs`
 - `composer skeleton`
 

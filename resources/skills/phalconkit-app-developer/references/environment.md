@@ -89,7 +89,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       args:
-        PHP_VARIANT: php:8.4-fpm
+        PHP_VARIANT: php:8.5-fpm
         DEV_MODE: 1
     volumes:
       - ./:/app
@@ -107,7 +107,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       args:
-        PHP_VARIANT: docker.io/phpswoole/swoole:6.0.1-php8.4-dev
+        PHP_VARIANT: docker.io/phpswoole/swoole:6.0.1-php8.5-dev
         DEV_MODE: 0
     command: ["php", "websocket"]
     ports:
@@ -162,7 +162,7 @@ The image can use an overridable base so PHP-FPM and Swoole share most of the
 same extension setup:
 
 ```dockerfile
-ARG PHP_VARIANT=php:8.4-fpm
+ARG PHP_VARIANT=php:8.5-fpm
 ARG COMPOSER_VARIANT=composer:2
 ARG PHALCON_VERSION=5.13.0
 
@@ -399,7 +399,7 @@ location ~ \.php$ {
 
     fastcgi_param DOCUMENT_ROOT $container_root;
     fastcgi_param SCRIPT_FILENAME $container_root$fastcgi_script_name;
-    fastcgi_pass unix:/home/appuser/containers/php/sockets/php84/php-fpm.sock;
+    fastcgi_pass unix:/home/appuser/containers/php/sockets/php85/php-fpm.sock;
 
     fastcgi_param QUERY_STRING $query_string;
 }
@@ -474,7 +474,7 @@ safer local binding, publish only `127.0.0.1:8081`.
 podman run -it --init --rm \
   -v /home/me/Projects:/app \
   --network="host" \
-  localhost/php-app:8.4 \
+  localhost/php-app:8.5 \
   php /app/my-app/websocket
 ```
 
@@ -482,7 +482,7 @@ podman run -it --init --rm \
 podman run -it --init --rm \
   -v /home/me/Projects:/app \
   -p 127.0.0.1:8081:8081 \
-  localhost/php-app:8.4 \
+  localhost/php-app:8.5 \
   php /app/my-app/websocket
 ```
 
@@ -498,7 +498,7 @@ After=network.target
 [Service]
 User=appuser
 Group=appuser
-ExecStart=/opt/alt/php84/usr/bin/php /home/appuser/example.test/websocket
+ExecStart=/opt/alt/php85/usr/bin/php /home/appuser/example.test/websocket
 KillSignal=SIGINT
 Restart=always
 RestartSec=3
@@ -517,7 +517,7 @@ WantedBy=multi-user.target
 On CloudLinux/CageFS hosts, use the host-provided wrapper when required:
 
 ```ini
-ExecStart=/usr/bin/lve_suwrapper 1006 /opt/alt/php84/usr/bin/php /home/appuser/example.test/websocket
+ExecStart=/usr/bin/lve_suwrapper 1006 /opt/alt/php85/usr/bin/php /home/appuser/example.test/websocket
 ```
 
 ## Deployment Checklist

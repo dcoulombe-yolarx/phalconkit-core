@@ -188,7 +188,7 @@ Podman can run the same entrypoint:
 podman run -it --init --rm \
   -v /home/me/Projects:/app \
   --network="host" \
-  localhost/php-app:8.4 \
+  localhost/php-app:8.5 \
   php /app/my-app/websocket
 ```
 
@@ -199,7 +199,7 @@ Apache, Nginx, or another reverse proxy expose the public `/ws/` path:
 podman run -it --init --rm \
   -v /home/me/Projects:/app \
   -p 127.0.0.1:8081:8081 \
-  localhost/php-app:8.4 \
+  localhost/php-app:8.5 \
   php /app/my-app/websocket
 ```
 
@@ -510,7 +510,7 @@ After=network.target
 [Service]
 User=appuser
 Group=appuser
-ExecStart=/opt/alt/php84/usr/bin/php /home/appuser/example.test/websocket
+ExecStart=/opt/alt/php85/usr/bin/php /home/appuser/example.test/websocket
 
 KillSignal=SIGINT
 Restart=always
@@ -533,7 +533,7 @@ On shared hosting with CageFS or CloudLinux, the command may need the host's
 PHP wrapper instead of the raw PHP binary:
 
 ```ini
-ExecStart=/usr/bin/lve_suwrapper 1006 /opt/alt/php84/usr/bin/php /home/appuser/example.test/websocket
+ExecStart=/usr/bin/lve_suwrapper 1006 /opt/alt/php85/usr/bin/php /home/appuser/example.test/websocket
 ```
 
 Process rules:
