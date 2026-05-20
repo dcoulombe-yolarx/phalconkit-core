@@ -18,6 +18,33 @@ namespace PhalconKit\Db;
  */
 class Profiler extends \Phalcon\Db\Profiler
 {
+    public function getProfiles(): array
+    {
+        try {
+            return parent::getProfiles();
+        } catch (\TypeError) {
+            return [];
+        }
+    }
+
+    public function getTotalElapsedNanoseconds(): float
+    {
+        try {
+            return parent::getTotalElapsedNanoseconds();
+        } catch (\TypeError) {
+            return 0.0;
+        }
+    }
+
+    public function getTotalElapsedSeconds(): float
+    {
+        try {
+            return parent::getTotalElapsedSeconds();
+        } catch (\TypeError) {
+            return 0.0;
+        }
+    }
+
     public function toArray(): array
     {
         $profiles = [];
