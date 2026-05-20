@@ -3,6 +3,7 @@ includes:
 
 parameters:
     level: 5
+    tmpDir: .cache/phpstan
     paths:
         - src
 #        - tests
@@ -14,7 +15,5 @@ parameters:
         - */vendor/* # Exclude vendor directory
     fileExtensions:
         - php
-    parallel:
-        maximumNumberOfProcesses: 16
     treatPhpDocTypesAsCertain: false # Treat PHPDoc types as certain to be more strict
     polluteScopeWithLoopInitialAssignments: false # Optional: Configures scope behaviour in loops
