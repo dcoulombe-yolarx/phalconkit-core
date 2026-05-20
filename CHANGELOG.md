@@ -108,6 +108,10 @@ tag has been cut yet.
   5.13, and stricter local/CI analyzer settings.
 - Fixed GitHub workflow drift where CI and local analyzer commands reported
   different Psalm results.
+- Fixed stale GitHub Code Scanning results by restoring Psalm SARIF upload from
+  the PHP security workflow.
+- Fixed OpenSSF Scorecard Code Scanning warnings by publishing Scorecard JSON
+  results instead of uploading repository-level findings as SARIF.
 - Fixed Composer audit handling so unlocked or lock-file-less installs do not
   fail the wrong workflow path.
 - Fixed Node.js action deprecation exposure by moving workflow actions toward
@@ -141,6 +145,10 @@ tag has been cut yet.
   improvements.
 - Added security-focused QA entry points for Composer audit, Psalm taint
   analysis, OpenSSF Scorecard, and workflow static analysis.
+- Restored Psalm SARIF publishing to GitHub Code Scanning for the current PHP
+  8.5 security workflow.
+- Kept OpenSSF Scorecard publishing enabled while removing SARIF upload for its
+  non-file-specific findings.
 - Tightened public repository hygiene around ignored AI/tooling files and
   generated/local artifacts.
 
