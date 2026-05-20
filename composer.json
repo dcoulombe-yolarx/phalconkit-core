@@ -156,19 +156,35 @@
     "exclude": [
       "/.github",
       "/.cache",
+      "/.codex",
+      "/.idea",
       "/.phalcon",
+      "/.phpdoc",
       "/.phpunit.cache",
+      "/.run",
+      "/.aiignore",
+      "/.env*",
+      "/docs",
       "/tests",
+      "/vendor",
+      "AGENTS.md",
+      "AI.md",
       "CHANGELOG.md",
-      "codeception.yml",
+      "composer.lock",
+      "patches.lock.json",
+      "phpcs-eol.xml",
       "phpcs.xml",
       "phpcs.xml.dist",
+      "phpdoc.xml",
+      "qodana.yaml",
       "phpstan.neon",
       "phpstan.neon.dist",
       "phpunit.xml",
       "phpunit.xml.dist",
       "psalm.xml",
-      "psalm.xml.dist"
+      "psalm.xml.dist",
+      "results.sarif",
+      "taints.dot"
     ]
   },
   "bin": [
@@ -176,7 +192,6 @@
   ],
   "scripts": {
     "check": "@qa",
-    "docker": "docker-compose up",
     "outdated:direct": "composer show --direct --outdated",
     "qa": [
       "@qa:composer",
