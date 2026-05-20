@@ -7,4 +7,6 @@
 # For the full copyright and license information, please view the LICENSE.txt
 # file that was distributed with this source code.
 #
-phpstan analyse "$@" --memory-limit=1G --debug
+: "${PHPSTAN_MEMORY_LIMIT:=1G}"
+
+phpstan analyse --memory-limit="$PHPSTAN_MEMORY_LIMIT" "$@"

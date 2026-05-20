@@ -7,8 +7,11 @@
 # For the full copyright and license information, please view the LICENSE.txt
 # file that was distributed with this source code.
 #
+if [ -z "${PHALCON_KIT_CACHE_DIR:-}" ]; then
+  PHALCON_KIT_CACHE_DIR="$(pwd)/.cache"
+fi
 if [ -z "${XDG_CACHE_HOME:-}" ] || [ ! -w "$XDG_CACHE_HOME" ]; then
-  export XDG_CACHE_HOME="${PHALCON_KIT_PHPCS_CACHE_HOME:-/tmp/phalcon-kit-phpcs-cache}"
+  export XDG_CACHE_HOME="$PHALCON_KIT_CACHE_DIR"
 fi
 mkdir -p "$XDG_CACHE_HOME"
 : "${PHPCS_CACHE:=$XDG_CACHE_HOME/phpcs.cache}"
