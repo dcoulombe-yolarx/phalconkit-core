@@ -396,7 +396,7 @@ final class Loader
 //                    throw new \RuntimeException('Relations with composite keys are not supported');
 //                }
                 
-                $parent = $nestingLevel > 0 && isset($parentName) ? $eagerLoads[$parentName] : $this;
+                $parent = $nestingLevel > 0 ? $eagerLoads[$parentName] : $this;
                 $constraints = $nestingLevel + 1 === $nestingLevels ? $queryConstraints : null;
                 
                 $eagerLoads[$name] = new EagerLoad($relation, $constraints, $parent);
