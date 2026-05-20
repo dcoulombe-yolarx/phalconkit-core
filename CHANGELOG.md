@@ -130,8 +130,8 @@ tag has been cut yet.
   different Psalm results.
 - Fixed stale GitHub Code Scanning results by restoring Psalm SARIF upload from
   the PHP security workflow with a stable category and error-only report output.
-- Fixed OpenSSF Scorecard Code Scanning warnings by publishing Scorecard JSON
-  results instead of uploading repository-level findings as SARIF.
+- Fixed OpenSSF Scorecard Code Scanning refresh by publishing Scorecard SARIF
+  results after relevant workflow findings were remediated.
 - Fixed Composer audit handling so unlocked or lock-file-less installs do not
   fail the wrong workflow path.
 - Fixed Node.js action deprecation exposure by moving workflow actions toward
@@ -167,8 +167,10 @@ tag has been cut yet.
   analysis, OpenSSF Scorecard, and workflow static analysis.
 - Restored Psalm SARIF publishing to GitHub Code Scanning for the current PHP
   8.5 security workflow without publishing informational Psalm notes as alerts.
-- Kept OpenSSF Scorecard publishing enabled while removing SARIF upload for its
-  non-file-specific findings.
+- Restored OpenSSF Scorecard SARIF publishing so remediated Scorecard findings
+  can refresh in GitHub Code Scanning.
+- Pinned GitHub Actions workflow dependencies to commit SHAs to satisfy the
+  OpenSSF Scorecard pinned-dependencies check.
 - Tightened public repository hygiene around ignored AI/tooling files and
   generated/local artifacts.
 
