@@ -75,7 +75,7 @@ trait Params
      * @param bool $cached Whether to reuse cached raw parameters.
      * @param bool $deep Whether to apply deep sanitization.
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      * @throws Exception
      */
     public function getParams(?array $fields = null, bool $cached = true, bool $deep = true): array
@@ -109,7 +109,7 @@ trait Params
      * @param bool $cached Whether to reuse previously loaded parameters.
      * @param bool $deep Whether to apply filters recursively.
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      * @throws Exception
      */
     public function getAllParams(?array $filters = null, bool $cached = true, bool $deep = true): array
