@@ -6,7 +6,7 @@ unless the task explicitly asks for regenerated docs.
 
 ## Repository Shape
 
-- This is a PHP 8.4 library package for Phalcon 5.13.x, published as
+- This is a PHP 8.5 library package for Phalcon 5.13.x, published as
   `phalcon-kit/core`.
 - Runtime code lives in `src/` under the `PhalconKit\` namespace.
 - Unit tests live in `tests/Unit/`.
@@ -33,7 +33,8 @@ unless the task explicitly asks for regenerated docs.
 Use the smallest relevant checks for the change:
 
 - `composer phpunit` for unit tests.
-- `composer psalm` for Psalm taint/static analysis.
+- `composer psalm` for Psalm static analysis.
+- `composer psalm:taint` for Psalm taint analysis.
 - `composer phpcs` for coding-standard checks.
 - `composer skeleton` for package skeleton validation.
 - `composer docs` only when intentionally regenerating phpDocumentor output.

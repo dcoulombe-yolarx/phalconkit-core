@@ -8,7 +8,7 @@
 # file that was distributed with this source code.
 #
 : "${PHPSTAN_MEMORY_LIMIT:=1G}"
-: "${PHPSTAN_DEBUG:=1}"
+: "${PHPSTAN_DEBUG:=0}"
 
 args=(--memory-limit="$PHPSTAN_MEMORY_LIMIT")
 if [ "$PHPSTAN_DEBUG" != "0" ]; then

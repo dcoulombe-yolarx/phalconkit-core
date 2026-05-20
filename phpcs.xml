@@ -2,7 +2,7 @@
 <ruleset name="Phalcon Kit">
     <description>
         Phalcon Kit Coding Standards — PSR-12 foundation with pragmatic whitespace,
-        modern PHP 8.4 syntax support, and framework-friendly flexibility.
+        modern PHP 8.5 syntax support, and framework-friendly flexibility.
     </description>
 
     <!-- ====================================================== -->
@@ -19,8 +19,8 @@
     <!-- Define base path for relative includes -->
     <config name="basepath" value="."/>
 
-    <!-- Target PHP version (8.4.x) -->
-    <config name="php_version" value="80400"/>
+    <!-- Target PHP version (8.5.x) -->
+    <config name="php_version" value="80500"/>
 
     <!-- ====================================================== -->
     <!-- Base Standard with targeted relaxations -->

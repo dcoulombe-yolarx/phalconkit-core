@@ -17,4 +17,4 @@ mkdir -p "$XDG_CACHE_HOME"
 : "${PSALM_THREADS:=1}"
 : "${PSALM_SCAN_THREADS:=$PSALM_THREADS}"
 
-psalm --config=psalm.xml --threads="$PSALM_THREADS" --scan-threads="$PSALM_SCAN_THREADS" --taint-analysis --dump-taint-graph=taints.dot "$@"
+psalm --config=psalm.xml --threads="$PSALM_THREADS" --scan-threads="$PSALM_SCAN_THREADS" "$@"

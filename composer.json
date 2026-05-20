@@ -197,22 +197,25 @@
       "@qa:composer",
       "@qa:style",
       "@qa:static",
+      "@qa:security",
       "@qa:test"
     ],
     "qa:composer": [
       "composer validate --strict --no-check-publish",
-      "composer audit"
+      "composer audit --locked"
     ],
     "qa:static": [
       "./bin/phpstan.sh --no-progress",
       "./bin/psalm.sh --no-progress"
     ],
+    "qa:security": "./bin/psalm.sh --taint-analysis --dump-taint-graph=taints.dot --no-progress",
     "qa:style": "./bin/phpcs.sh --report=summary",
     "qa:test": "./bin/phpunit.sh --display-skipped --display-errors",
     "skeleton": "./bin/skeleton.sh validate ./",
     "phpunit": "./bin/phpunit.sh",
     "phpstan": "./bin/phpstan.sh",
     "psalm": "./bin/psalm.sh",
+    "psalm:taint": "./bin/psalm.sh --taint-analysis --dump-taint-graph=taints.dot",
     "php-cs-fixer": "./bin/php-cs-fixer.sh",
     "phpcs": "./bin/phpcs.sh",
     "phpcbf": "./bin/phpcbf.sh",
@@ -230,12 +233,14 @@
   "scripts-descriptions": {
     "check": "Alias for the full QA gate.",
     "outdated:direct": "Show outdated direct dependencies only.",
-    "qa": "Run Composer validation/audit, coding style, static analysis, and PHPUnit.",
+    "qa": "Run Composer validation/audit, coding style, static/security analysis, and PHPUnit.",
     "qa:composer": "Validate composer.json and run Composer security audit.",
+    "qa:security": "Run Psalm taint analysis.",
     "qa:static": "Run PHPStan and Psalm.",
     "qa:style": "Run PHPCS with the compact summary report.",
     "qa:test": "Run PHPUnit with skipped/error details.",
     "static": "Run PHPStan and Psalm with their default local options.",
+    "psalm:taint": "Run Psalm taint analysis and write taints.dot.",
     "style": "Run PHPCS.",
     "style:fix": "Run PHPCBF.",
     "test": "Run PHPUnit.",

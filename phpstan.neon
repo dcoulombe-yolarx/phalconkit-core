@@ -3,6 +3,7 @@ includes:
 
 parameters:
     level: 5
+    phpVersion: 80500
     tmpDir: .cache/phpstan
     paths:
         - src
@@ -15,5 +16,5 @@ parameters:
         - */vendor/* # Exclude vendor directory
     fileExtensions:
         - php
-    treatPhpDocTypesAsCertain: false # Treat PHPDoc types as certain to be more strict
+    treatPhpDocTypesAsCertain: false # Do not fully trust PHPDoc where runtime types are broader.
     polluteScopeWithLoopInitialAssignments: false # Optional: Configures scope behaviour in loops

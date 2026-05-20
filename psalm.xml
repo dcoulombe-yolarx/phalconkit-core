@@ -13,7 +13,7 @@
         xmlns="https://getpsalm.org/schema/config"
         xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
         xmlns:xi="http://www.w3.org/2001/XInclude"
-        phpVersion="8.4"
+        phpVersion="8.5"
         errorLevel="2"
         resolveFromConfigFile="true"
         findUnusedBaselineEntry="true"
@@ -47,13 +47,6 @@
                 <referencedFunction name="json_decode" />
             </errorLevel>
         </ArgumentTypeCoercion>
-
-        <!-- False positive -->
-        <InvalidArgument>
-            <errorLevel type="suppress">
-                <referencedFunction name="Redis::connect" />
-            </errorLevel>
-        </InvalidArgument>
 
         <!-- False positive -->
         <UndefinedClass>

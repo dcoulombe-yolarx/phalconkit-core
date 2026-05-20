@@ -199,7 +199,7 @@ If you want to expose the application to the public world wide web,
 you can use apache, nginx or any similar production ready web servers.
 
 You will need a Web server service to point to the `/public/` folder of your new project.
-Here is virtual host example using apache 2.4 + php-fpm 8.4 from remi repository on Redhat.
+Here is virtual host example using apache 2.4 + php-fpm 8.5 from remi repository on Redhat.
 
 ```apacheconf
 <VirtualHost *:80>
@@ -214,7 +214,7 @@ Here is virtual host example using apache 2.4 + php-fpm 8.4 from remi repository
     </Directory>
 
     <FilesMatch \.(php|phar)$>
-        SetHandler "proxy:unix:/var/opt/remi/php84/run/php-fpm/www.sock|fcgi://localhost"
+        SetHandler "proxy:unix:/var/opt/remi/php85/run/php-fpm/www.sock|fcgi://localhost"
     </FilesMatch>
 </VirtualHost>
 
@@ -230,7 +230,7 @@ Here is virtual host example using apache 2.4 + php-fpm 8.4 from remi repository
     </Directory>
 
     <FilesMatch \.(php|phar)$>
-        SetHandler "proxy:unix:/var/opt/remi/php84/run/php-fpm/www.sock|fcgi://localhost"
+        SetHandler "proxy:unix:/var/opt/remi/php85/run/php-fpm/www.sock|fcgi://localhost"
     </FilesMatch>
 
     SetEnv HTTPS on
@@ -256,7 +256,7 @@ By meeting these requirements, you can ensure a smooth and efficient experience 
 Phalcon Kit is built to be flexible and powerful, supporting a wide range of technologies and components. While we have certain core requirements, you have the freedom to integrate additional tools as per your project's needs.
 
 - **[Composer](https://getcomposer.org/)**: Required for managing dependencies in Phalcon Kit. Composer simplifies the installation and update process of PHP packages, making it a vital tool for managing Phalcon Kit's components.
-- **[PHP](https://secure.php.net/) >= 8.4**: Essential for Phalcon Kit, PHP 8.4+ brings modern features and improved performance.
+- **[PHP](https://secure.php.net/) >= 8.5**: Essential for Phalcon Kit, PHP 8.5+ brings modern features and improved performance.
 - **[PhalconPHP](https://phalconphp.com/) 5.13.x**: Our core framework. Phalcon's efficiency and rich feature set are crucial for Phalcon Kit's performance.
 - **Database Flexibility**: While we recommend [MySQL](https://www.mysql.com/) >= 8.0 for its robustness, Phalcon Kit is compatible with other databases supported by Phalcon. This flexibility allows you to choose the database that best fits your project's requirements.
 - **PSR Standards**: Compliance with PSR standards is mandatory, ensuring interoperability and standard coding practices.
