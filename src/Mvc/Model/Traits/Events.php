@@ -25,13 +25,22 @@ trait Events
     use AbstractInstance;
     
     abstract public function fireEventCancel(string $eventName): bool;
+
+    private static function ensureTraversableResultset(ResultsetInterface $resultset): ResultsetInterface&\Traversable
+    {
+        if (!$resultset instanceof \Traversable) {
+            throw new \LogicException('Phalcon model find() returned a non-traversable resultset.');
+        }
+
+        return $resultset;
+    }
     
     /**
      * Retrieves records from the database that match the specified conditions.
      *
      * @see \Phalcon\Mvc\Model::find()
      * @param array|int|null|string $parameters Optional conditions to filter the retrieved records. Can include arrays, strings, or other query parameters.
-     * @return ResultsetInterface Returns the result set, or an empty result set if the operation is canceled.
+     * @return ResultsetInterface&\Traversable Returns the result set, or an empty result set if the operation is canceled.
      */
     #[\Override]
     public static function find(mixed $parameters = null): ResultsetInterface
@@ -40,14 +49,14 @@ trait Events
         $event = ucfirst(Helper::camelize(__FUNCTION__));
 
         if ($instance->fireEventCancel('before' . $event) === false) {
-            return new Simple(null, $instance, false);
+            return self::ensureTraversableResultset(new Simple(null, $instance, false));
         }
 
         $ret = parent::find($parameters);
 
         $instance->fireEvent('after' . $event);
 
-        return $ret;
+        return self::ensureTraversableResultset($ret);
     }
     
     /**
