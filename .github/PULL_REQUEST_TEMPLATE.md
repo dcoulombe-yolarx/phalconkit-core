@@ -6,7 +6,8 @@ Describe the change and the problem it solves.
 
 - [ ] `composer qa`
 - [ ] Added or updated focused tests where behavior changed
-- [ ] Updated docs/skills when public behavior or maintainer workflow changed
+- [ ] Updated `CHANGELOG.md`, docs, or skills when public behavior or
+      maintainer workflow changed
 
 ## Risk
 

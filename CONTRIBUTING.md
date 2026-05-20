@@ -52,6 +52,8 @@ Please report bugs when you've exhausted all of the above options.
 * Don't put submodule updates in your pull request unless they are to landed commits
 * Add tests relevant to the fixed bug or new feature.
 * Run `composer qa` before opening the pull request.
+* Update `CHANGELOG.md` under the current unreleased version section when a pull request changes public
+  behavior, compatibility, security posture, tooling, or maintainer workflow.
 * Update documentation or skills when changing public behavior, generated output, or maintainer workflow.
 
 ## Requesting Features

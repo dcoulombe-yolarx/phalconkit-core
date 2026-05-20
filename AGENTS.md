@@ -25,6 +25,9 @@ unless the task explicitly asks for regenerated docs.
 - Prefer focused edits over broad formatting or cleanup.
 - Add or update tests when runtime behavior changes. Documentation-only changes
   normally do not need PHP tests.
+- Update `CHANGELOG.md` under the current unreleased version section when a
+  change affects public behavior, compatibility, security posture, tooling, or
+  maintainer workflow.
 - Keep public package behavior stable unless the task explicitly asks for a
   breaking change.
 

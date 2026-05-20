@@ -36,6 +36,9 @@ README, `AI.md`, or other AI-facing documentation.
 5. Do not hand-edit generated API docs unless the task explicitly asks for a
    generated-doc patch. Prefer `composer docs` when regeneration is intended.
 6. Documentation-only changes should not modify PHP runtime files.
+7. Update `CHANGELOG.md` under the current unreleased version section when
+   changing public behavior, compatibility, security posture, tooling, or
+   maintainer workflow.
 
 ## Common Validation
 
