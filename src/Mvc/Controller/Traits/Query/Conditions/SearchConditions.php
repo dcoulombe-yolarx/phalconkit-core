@@ -245,6 +245,8 @@ trait SearchConditions
      * This method is intentionally isolated so that
      * search tokenization can evolve independently
      * of SQL generation.
+     *
+     * @return list<string>
      */
     public function extractSearchTerms(): array
     {
