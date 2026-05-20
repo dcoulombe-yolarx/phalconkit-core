@@ -92,7 +92,8 @@ trait Identity
     public function getCurrentUserId(bool $as = false): ?int
     {
         $user = $this->getCurrentUser($as);
-        return $user?->getId();
+        $id = $user?->getId();
+        return $id === null ? null : (int)$id;
     }
     
     /**
