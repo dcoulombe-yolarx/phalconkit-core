@@ -86,4 +86,18 @@ class ImplodeSprintfTest extends AbstractUnit
         $array = ['apple', 42, null, 'banana'];
         $this->assertEquals('apple 42 banana', implode_sprintf($array));
     }
+
+    public function testImplodeSprintfPreservesZeroAndFalseValues(): void
+    {
+        $array = ['zero' => 0, 'false' => false, 'null' => null, 'empty' => ''];
+
+        $this->assertSame('zero=0|false=|empty=', implode_sprintf($array, '|', '%2$s=%1$s'));
+    }
+
+    public function testImplodeSprintfCanUseKeysInFormat(): void
+    {
+        $array = ['first' => 'Ada', 'last' => 'Lovelace'];
+
+        $this->assertSame('first:Ada,last:Lovelace', implode_sprintf($array, ',', '%2$s:%1$s'));
+    }
 }

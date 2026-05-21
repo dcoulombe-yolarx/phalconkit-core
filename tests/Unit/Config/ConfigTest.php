@@ -70,4 +70,80 @@ class ConfigTest extends AbstractUnit
             }
         }
     }
+
+    public function testPathToArrayConvertsNestedConfigToArray(): void
+    {
+        $config = new Config([
+            'database' => new Config([
+                'host' => 'localhost',
+                'port' => 3306,
+            ]),
+        ]);
+
+        $this->assertSame([
+            'host' => 'localhost',
+            'port' => 3306,
+        ], $config->pathToArray('database'));
+    }
+
+    public function testMergeAppendRecursivelyAppendsNumericValuesAndReplacesAssociativeValues(): void
+    {
+        $config = new Config([
+            'providers' => [
+                'first',
+            ],
+            'database' => [
+                'host' => 'db',
+                'options' => [
+                    'timeout' => 10,
+                ],
+            ],
+        ]);
+
+        $result = $config->merge([
+            'providers' => [
+                'second',
+            ],
+            'database' => [
+                'host' => 'db2',
+                'options' => [
+                    'charset' => 'utf8mb4',
+                ],
+            ],
+        ], true);
+
+        $this->assertSame($config, $result);
+        $this->assertSame([
+            'first',
+            'second',
+        ], $config->pathToArray('providers'));
+        $this->assertSame([
+            'host' => 'db2',
+            'options' => [
+                'timeout' => 10,
+                'charset' => 'utf8mb4',
+            ],
+        ], $config->pathToArray('database'));
+    }
+
+    public function testMergeAppendRejectsInvalidDataType(): void
+    {
+        $config = new Config();
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Invalid data type for merge.');
+
+        $config->merge('invalid', true);
+    }
+
+    public function testGetDateTimeUsesProvidedBaseDate(): void
+    {
+        $config = new Config();
+        $baseDate = new \DateTimeImmutable('2026-01-01 00:00:00');
+
+        $this->assertSame(
+            '2026-01-08 00:00:00',
+            $config->getDateTime('+7 days', $baseDate)->format('Y-m-d H:i:s')
+        );
+    }
 }

@@ -67,6 +67,25 @@ class CollectionPolicyTest extends AbstractUnit
         ], $merged->toArray());
     }
 
+    public function testMergeNullableAppendsNumericValuesWithoutMutatingInputs(): void
+    {
+        $base = new Collection([
+            'id',
+        ]);
+        $incoming = new Collection([
+            'label',
+        ]);
+
+        $merged = CollectionPolicy::mergeNullable($base, $incoming);
+
+        $this->assertSame(['id'], $base->toArray());
+        $this->assertSame(['label'], $incoming->toArray());
+        $this->assertSame([
+            'id',
+            'label',
+        ], $merged->toArray());
+    }
+
     public function testIntersectNullableUsesIncomingWhenBaseIsNull(): void
     {
         $incoming = new Collection([
@@ -101,6 +120,28 @@ class CollectionPolicyTest extends AbstractUnit
         $this->assertSame([
             'id',
             'label',
+        ], $intersected->toArray());
+    }
+
+    public function testIntersectNullablePreservesDuplicateBaseValuesAndReindexes(): void
+    {
+        $base = new Collection([
+            'id',
+            'id',
+            'label',
+            'status',
+        ]);
+        $incoming = new Collection([
+            'id',
+            'status',
+        ]);
+
+        $intersected = CollectionPolicy::intersectNullable($base, $incoming);
+
+        $this->assertSame([
+            'id',
+            'id',
+            'status',
         ], $intersected->toArray());
     }
 }

@@ -222,4 +222,27 @@ class StatusCodeTest extends AbstractUnit
         // Make sure we tested everything
         $this->assertEquals(count($messages), count(StatusCode::$messages));
     }
+
+    public function testDeveloperFriendlyAliasesUseCanonicalMessages(): void
+    {
+        $this->assertSame(StatusCode::INTERNAL_SERVER_ERROR, StatusCode::FATAL_ERROR);
+        $this->assertSame('Internal Server Error', StatusCode::getMessage(StatusCode::FATAL_ERROR));
+
+        $this->assertSame(StatusCode::SERVICE_UNAVAILABLE, StatusCode::MAINTENANCE);
+        $this->assertSame(StatusCode::SERVICE_UNAVAILABLE, StatusCode::OVERLOADED);
+        $this->assertSame(StatusCode::SERVICE_UNAVAILABLE, StatusCode::BUSY);
+        $this->assertSame('503 Service Unavailable', StatusCode::getStatus(StatusCode::BUSY));
+    }
+
+    public function testGetCodeRequiresExactMessageMatch(): void
+    {
+        $this->assertSame(StatusCode::OK, StatusCode::getCode('OK'));
+        $this->assertNull(StatusCode::getCode('ok'));
+        $this->assertNull(StatusCode::getCode(' OK '));
+    }
+
+    public function testGetStatusReturnsTrimmedCodeForUnknownStatus(): void
+    {
+        $this->assertSame('777', StatusCode::getStatus(777));
+    }
 }

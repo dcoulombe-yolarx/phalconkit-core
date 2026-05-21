@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace PhalconKit\Tests\Unit\Support;
 
+use Phalcon\Di\Di;
 use PhalconKit\Di\Injectable;
+use PhalconKit\Models\User;
+use PhalconKit\Bootstrap\Config;
 use PhalconKit\Support\ModelsMap;
 use PhalconKit\Tests\Unit\AbstractUnit;
 
@@ -137,5 +140,21 @@ class ModelsMapTest extends AbstractUnit
         // Remove an existing mapping
         $this->modelsMap->removeClassMap('Test');
         $this->assertEquals('Test', $this->modelsMap->getClassMap('Test'));
+    }
+
+    public function testSetModelsMapLoadsMappingFromConfig(): void
+    {
+        $di = new Di();
+        $di->set('config', new Config([
+            'models' => [
+                User::class => 'App\\Models\\User',
+            ],
+        ]));
+        $this->modelsMap->setDI($di);
+
+        $this->modelsMap->setModelsMap();
+
+        $this->assertArrayHasKey(User::class, $this->modelsMap->getModelsMap());
+        $this->assertSame('App\\Models\\User', $this->modelsMap->getUserClass());
     }
 }

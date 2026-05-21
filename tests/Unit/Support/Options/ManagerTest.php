@@ -64,4 +64,33 @@ class ManagerTest extends AbstractUnit
         $this->assertNull($this->manager->get('new'));
         $this->assertEquals([], $this->manager->getOptions());
     }
+
+    public function testSetOptionsCanMergeWithExistingOptions(): void
+    {
+        $this->manager = new Manager([
+            'first' => 'original',
+            'second' => 'kept',
+        ]);
+
+        $this->manager->setOptions([
+            'first' => 'changed',
+            'third' => 'added',
+        ], true);
+
+        $this->assertSame([
+            'first' => 'changed',
+            'second' => 'kept',
+            'third' => 'added',
+        ], $this->manager->getOptions());
+    }
+
+    public function testNullOptionUsesDefaultAndIsNotReportedAsPresent(): void
+    {
+        $this->manager = new Manager();
+        $this->manager->set('nullable');
+
+        $this->assertFalse($this->manager->has('nullable'));
+        $this->assertSame('fallback', $this->manager->get('nullable', 'fallback'));
+        $this->assertArrayHasKey('nullable', $this->manager->getOptions());
+    }
 }

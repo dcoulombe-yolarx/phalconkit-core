@@ -30,10 +30,29 @@ class RawArraySerializerTest extends AbstractUnit
     {
         $this->assertEquals([], $this->rawArraySerializer->collection('key', []));
     }
+
+    public function testCollectionReturnsDataWithoutResourceKeyWrapper(): void
+    {
+        $data = [
+            ['id' => 1],
+            ['id' => 2],
+        ];
+
+        $this->assertSame($data, $this->rawArraySerializer->collection('users', $data));
+        $this->assertArrayNotHasKey('users', $this->rawArraySerializer->collection('users', $data));
+    }
     
     public function testItem(): void
     {
         $this->assertEquals([], $this->rawArraySerializer->item('key', []));
+    }
+
+    public function testItemReturnsDataWithoutResourceKeyWrapper(): void
+    {
+        $data = ['id' => 1, 'name' => 'Ada'];
+
+        $this->assertSame($data, $this->rawArraySerializer->item('user', $data));
+        $this->assertArrayNotHasKey('user', $this->rawArraySerializer->item('user', $data));
     }
     
     public function testNull(): void

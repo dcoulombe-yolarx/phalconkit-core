@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace PhalconKit\Tests\Unit\Translate;
 
 use Phalcon\Translate\Adapter\AdapterInterface;
+use Phalcon\Translate\Exception;
 use Phalcon\Translate\InterpolatorFactory;
 use PhalconKit\Tests\Unit\AbstractUnit;
 use PhalconKit\Translate\Adapter\NestedNativeArray;
@@ -104,5 +105,50 @@ class TranslateTest extends AbstractUnit
         $this->assertEquals($key, $nestedNativeArray->notFound($key));
         $this->assertFalse($nestedNativeArray->has($key));
         $this->assertFalse($nestedNativeArray->exists($key));
+    }
+
+    public function testNestedNativeArraySupportsCustomDelimiter(): void
+    {
+        $translator = new NestedNativeArray(new InterpolatorFactory(), [
+            'delimiter' => '::',
+            'content' => [
+                'button' => [
+                    'save' => 'Save',
+                ],
+            ],
+        ]);
+
+        $this->assertTrue($translator->has('button::save'));
+        $this->assertTrue($translator->exists('button::save'));
+        $this->assertSame('Save', $translator->query('button::save'));
+        $this->assertSame('Save', $translator->t('button::save'));
+    }
+
+    public function testNestedNativeArrayReturnsOriginalContent(): void
+    {
+        $content = [
+            'hello' => 'Hello',
+            'nested' => [
+                'value' => 'Value',
+            ],
+        ];
+        $translator = new NestedNativeArray(new InterpolatorFactory(), [
+            'content' => $content,
+        ]);
+
+        $this->assertSame($content, $translator->toArray());
+    }
+
+    public function testNestedNativeArrayCanThrowWhenMissingKeyIsConfiguredAsError(): void
+    {
+        $translator = new NestedNativeArray(new InterpolatorFactory(), [
+            'triggerError' => true,
+            'content' => [],
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Cannot find translation key: missing.key');
+
+        $translator->query('missing.key');
     }
 }

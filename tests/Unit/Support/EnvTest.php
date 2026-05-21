@@ -125,6 +125,9 @@ class EnvTest extends AbstractUnit
         $names = '.env';
         Env::setNames($names);
         $this->assertEquals(Env::getNames(), $names);
+
+        Env::setNames(null);
+        $this->assertSame(['.env'], Env::getNames());
     }
 
     public function testLoadUsesConfiguredNames(): void
@@ -159,10 +162,10 @@ class EnvTest extends AbstractUnit
             ['immutable', 'Immutable'],
             ['unsafe-mutable', 'UnsafeMutable'],
             ['unsafe-immutable', 'UnsafeImmutable'],
-//            ['Mutable', 'Mutable'], // @todo make it work
-//            ['Immutable', 'Immutable'], // @todo make it work
-//            ['UnsafeMutable', 'UnsafeMutable'], // @todo make it work
-//            ['UnsafeImmutable', 'UnsafeImmutable'], // @todo make it work
+            ['Mutable', 'Mutable'],
+            ['Immutable', 'Immutable'],
+            ['UNSAFE-MUTABLE', 'UnsafeMutable'],
+            ['UNSAFE-IMMUTABLE', 'UnsafeImmutable'],
             ['non-existing', 'Mutable'], // @todo should throw an exception instead
         ];
         
@@ -190,6 +193,20 @@ class EnvTest extends AbstractUnit
             $this->assertEquals($expected, Env::getFileEncoding());
         }
     }
+
+    public function testGetTypeThrowsWhenStaticTypeIsUnsupported(): void
+    {
+        $previousType = Env::$type;
+        Env::$type = 'unsupported';
+
+        try {
+            $this->expectException(\Exception::class);
+            $this->expectExceptionMessage('Unsupported Env::$type defined');
+            Env::getType();
+        } finally {
+            Env::$type = $previousType;
+        }
+    }
     
     public function testSet(): void
     {
@@ -206,5 +223,20 @@ class EnvTest extends AbstractUnit
             $this->assertNull(Env::get($key));
             $this->assertEquals($value, Env::get($key, $value));
         }
+    }
+
+    public function testSetPreservesNonStringValuesAndCastsNumericStrings(): void
+    {
+        Env::set('TEST_ARRAY_VALUE', ['a' => 'b']);
+        Env::set('TEST_LEADING_ZERO_INT', '001');
+        Env::set('TEST_NEGATIVE_FLOAT', '-12.5');
+        Env::set('TEST_TRUE_UPPERCASE', 'TRUE');
+        Env::set('TEST_FALSE_MIXED_CASE', 'False');
+
+        $this->assertSame(['a' => 'b'], Env::get('TEST_ARRAY_VALUE'));
+        $this->assertSame(1, Env::get('TEST_LEADING_ZERO_INT'));
+        $this->assertSame(-12.5, Env::get('TEST_NEGATIVE_FLOAT'));
+        $this->assertTrue(Env::get('TEST_TRUE_UPPERCASE'));
+        $this->assertFalse(Env::get('TEST_FALSE_MIXED_CASE'));
     }
 }

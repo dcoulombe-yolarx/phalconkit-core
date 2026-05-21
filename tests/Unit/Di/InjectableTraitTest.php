@@ -52,6 +52,28 @@ class InjectableTraitTest extends AbstractUnit
         // bootstrap should be defined
         $this->assertInstanceOf(Bootstrap::class, $this->injectable->bootstrap);
     }
+
+    public function testSetDIUsesCustomContainerAndCachesSharedServices(): void
+    {
+        $di = new Di();
+        $service = new \stdClass();
+        $di->setShared('customService', $service);
+
+        $this->injectable->setDI($di);
+
+        $this->assertSame($di, $this->injectable->getDI());
+        $this->assertTrue(isset($this->injectable->customService));
+        $this->assertSame($service, $this->injectable->customService);
+        $this->assertSame($service, $this->injectable->instanceContainer['customService']);
+    }
+
+    public function testMagicGetCachesDiInstance(): void
+    {
+        $this->assertArrayNotHasKey('di', $this->injectable->instanceContainer);
+
+        $this->assertSame($this->di, $this->injectable->di);
+        $this->assertSame($this->di, $this->injectable->instanceContainer['di']);
+    }
     
     public function testPersistentSessionBag(): void
     {

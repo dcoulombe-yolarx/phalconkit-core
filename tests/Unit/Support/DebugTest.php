@@ -52,4 +52,36 @@ class DebugTest extends AbstractUnit
         $this->assertStringContainsString('Phalcon Kit', $result);
         $this->assertStringContainsString('Phalcon Framework', $result);
     }
+
+    public function testGetVersionLinksToCurrentDocumentationMajorMinor(): void
+    {
+        $phalconVersion = new PhalconVersion();
+        $expectedDocsUrl = sprintf(
+            'https://docs.phalcon.io/%d.%d/',
+            $phalconVersion->getPart(PhalconVersion::VERSION_MAJOR),
+            $phalconVersion->getPart(PhalconVersion::VERSION_MEDIUM)
+        );
+
+        $this->assertStringContainsString($expectedDocsUrl, (new Debug())->getVersion());
+    }
+
+    public function testGetCssSourcesReturnsInlineStyleBlock(): void
+    {
+        $css = (new Debug())->getCssSources();
+
+        $this->assertStringStartsWith('<style>', $css);
+        $this->assertStringContainsString(':root', $css);
+        $this->assertStringContainsString('.error-main', $css);
+        $this->assertStringEndsWith('</style>', $css);
+    }
+
+    public function testGetJsSourcesReturnsInlineScriptBlock(): void
+    {
+        $js = (new Debug())->getJsSources();
+
+        $this->assertStringStartsWith('<script>', $js);
+        $this->assertStringContainsString('DOMContentLoaded', $js);
+        $this->assertStringContainsString('Show full file', $js);
+        $this->assertStringEndsWith('</script>', $js);
+    }
 }

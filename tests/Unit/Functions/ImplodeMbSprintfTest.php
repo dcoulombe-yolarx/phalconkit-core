@@ -86,4 +86,11 @@ class ImplodeMbSprintfTest extends AbstractUnit
         $array = ['苹果', null, '香蕉'];
         $this->assertEquals('苹果 香蕉', implode_mb_sprintf($array));
     }
+
+    public function testImplodeMbSprintfPreservesZeroAndFalseValues(): void
+    {
+        $array = ['zero' => 0, 'false' => false, 'null' => null, 'empty' => ''];
+
+        $this->assertSame('[0]|[]|[]', implode_mb_sprintf($array, '|', '[%s]'));
+    }
 }

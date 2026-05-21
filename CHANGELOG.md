@@ -121,6 +121,24 @@ tag has been cut yet.
   scaffolding tests.
 - Added direct low-level unit coverage for array helper, options, exposer,
   filter sanitizer, validator, slug, and utility behavior.
+- Added direct unit coverage for custom helper factory registration and the
+  static helper facade.
+- Added broader low-level unit coverage for options managers, filter factory
+  wiring, PHP runtime helpers, status-code aliases, debug assets, array/string
+  formatting helpers, JSON escaping, translation adapters, and exception
+  subclasses.
+- Added additional low-level coverage for raw Fractal serialization,
+  transformer/manager contracts, and locale lookup helpers.
+- Added component-level coverage for event firing and injectable DI service
+  caching.
+- Added unit coverage for environment casting/defaults, config append merges,
+  provider base contracts, and common support provider registrations.
+- Added low-level coverage for database column constants, logger manager
+  adapters, URL normalization, security random UUID helpers, and request
+  origin/preflight edge cases.
+- Added framework-glue coverage for HTTP responses, MVC module routes, MVC
+  module service wiring, collection policy edge cases, config-backed model
+  maps, and common provider services.
 
 ### Changed
 

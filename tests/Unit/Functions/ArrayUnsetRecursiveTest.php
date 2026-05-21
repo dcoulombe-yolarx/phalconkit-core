@@ -83,4 +83,41 @@ class ArrayUnsetRecursiveTest extends AbstractUnit
         $this->assertEquals(0, array_unset_recursive($array, $keys));
         $this->assertEquals($expectedArray, $array);
     }
+
+    public function testRemovesRepeatedKeysAtEveryDepth(): void
+    {
+        $array = [
+            'remove' => 1,
+            'keep' => [
+                'remove' => 2,
+                'nested' => [
+                    'remove' => 3,
+                    'keep' => 4,
+                ],
+            ],
+        ];
+
+        $this->assertSame(3, array_unset_recursive($array, ['remove']));
+        $this->assertSame([
+            'keep' => [
+                'nested' => [
+                    'keep' => 4,
+                ],
+            ],
+        ], $array);
+    }
+
+    public function testDoesNotReindexNumericArraysAfterRemoval(): void
+    {
+        $array = [
+            ['id' => 1, 'remove' => true],
+            ['id' => 2, 'remove' => true],
+        ];
+
+        $this->assertSame(2, array_unset_recursive($array, ['remove']));
+        $this->assertSame([
+            0 => ['id' => 1],
+            1 => ['id' => 2],
+        ], $array);
+    }
 }

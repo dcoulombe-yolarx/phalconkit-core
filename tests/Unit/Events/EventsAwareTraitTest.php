@@ -97,6 +97,46 @@ class EventsAwareTraitTest extends AbstractUnit
         $this->assertEquals($data, $bag['data']);
 //        $this->assertFalse($bag['afterCancel']); // @todo why
     }
+
+    public function testFireReturnsListenerResultForNonCancelableEvent(): void
+    {
+        $task = 'testFireReturnsListenerResultForNonCancelableEvent';
+        $manager = new Manager();
+        $manager->attach($this->events->getEventsPrefix() . ':' . $task, static function () {
+            return 'listener-result';
+        });
+
+        $this->events->setEventsManager($manager);
+
+        $this->assertSame('listener-result', $this->events->fire($task, ['payload' => true]));
+    }
+
+    public function testFirePassesSubjectAndDataToListener(): void
+    {
+        $task = 'testFirePassesSubjectAndDataToListener';
+        $data = ['payload' => true];
+        $manager = new Manager();
+        $captured = [];
+        $manager->attach(
+            $this->events->getEventsPrefix() . ':' . $task,
+            function (EventInterface $event, object $subject, array $payload) use (&$captured): void {
+                $captured = [
+                    'type' => $event->getType(),
+                    'source' => $event->getSource(),
+                    'subject' => $subject,
+                    'payload' => $payload,
+                ];
+            }
+        );
+
+        $this->events->setEventsManager($manager);
+        $this->events->fire($task, $data);
+
+        $this->assertSame($task, $captured['type']);
+        $this->assertSame($this->events, $captured['source']);
+        $this->assertSame($this->events, $captured['subject']);
+        $this->assertSame($data, $captured['payload']);
+    }
     
     public function testFireCancelException(): void
     {

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace PhalconKit\Tests\Unit\Encryption;
 
 use Phalcon\Encryption\Security;
+use PhalconKit\Encryption\Security\Random;
 use PhalconKit\Tests\Unit\AbstractUnit;
 
 class SecurityTest extends AbstractUnit
@@ -30,6 +31,28 @@ class SecurityTest extends AbstractUnit
     {
         $this->assertInstanceOf(\PhalconKit\Encryption\Security::class, $this->security);
         $this->assertInstanceOf(\Phalcon\Encryption\Security::class, $this->security);
+    }
+
+    public function testGetRandomReturnsPhalconKitRandom(): void
+    {
+        $this->assertInstanceOf(Random::class, $this->security->getRandom());
+        $this->assertInstanceOf(\Phalcon\Encryption\Security\Random::class, $this->security->getRandom());
+    }
+
+    public function testRandomUuidAliasesAndVersions(): void
+    {
+        $random = new Random();
+        $uuidV4 = $random->uuidv4();
+        $uuidV7 = $random->uuidv7();
+
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/',
+            $uuidV4
+        );
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/',
+            $uuidV7
+        );
     }
     
     public function testArgonDefaultHash(): void

@@ -89,4 +89,23 @@ class EscaperTest extends AbstractUnit
         
         $this->assertSame(rawurlencode(json_encode($objectData)), $result);
     }
+
+    public function testJsonWithRawArray(): void
+    {
+        $this->expectException(\TypeError::class);
+
+        $this->escaper->json(['name' => 'Ada', 'active' => true]);
+    }
+
+    public function testJsonWithRawObject(): void
+    {
+        $this->expectException(\TypeError::class);
+
+        $this->escaper->json((object)['name' => 'Ada']);
+    }
+
+    public function testJsonWithInvalidJsonStringEncodesAsJsonString(): void
+    {
+        $this->assertSame(rawurlencode(json_encode('{"broken":')), $this->escaper->json('{"broken":'));
+    }
 }

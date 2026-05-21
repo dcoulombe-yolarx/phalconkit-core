@@ -92,6 +92,13 @@ class LocaleTest extends AbstractUnit
         $this->locale->setAllowed($allowed);
         $this->assertEquals($allowed, $this->locale->getAllowed());
     }
+
+    public function testSetAllowedRemovesDuplicateValuesAndReindexes(): void
+    {
+        $this->locale->setAllowed(['en', 'fr', 'en', 'fr_CA']);
+
+        $this->assertSame(['en', 'fr', 'fr_CA'], $this->locale->getAllowed());
+    }
     
     public function testGetDefaultValue(): void
     {
@@ -107,6 +114,18 @@ class LocaleTest extends AbstractUnit
         $this->locale->setLocale($locale);
         $this->assertNotEquals($locale, $this->locale->get());
         $this->assertNotEquals($locale, $this->locale->getLocale());
+    }
+
+    public function testGetFromRouteDefaultAndDispatcherRespectAllowedLocales(): void
+    {
+        $this->locale->setAllowed(['en', 'fr']);
+        $dispatcher = $this->di->get('dispatcher');
+
+        $this->assertSame('fr', $this->locale->getFromRoute('fr'));
+        $this->assertNull($this->locale->getFromRoute('de'));
+
+        $dispatcher->setParams(['locale' => 'en']);
+        $this->assertSame('en', $this->locale->getFromDispatcher());
     }
     
     public function testPrepareDefault(): void
@@ -218,5 +237,16 @@ class LocaleTest extends AbstractUnit
         
         $result = $this->locale->lookup('fr_CA', ['fr_CA', 'fr'], false, 'es');
         $this->assertEquals('fr_CA', $result);
+    }
+
+    public function testLookupReturnsNullWhenLocaleIsNullOrNoDefaultMatches(): void
+    {
+        $this->assertNull($this->locale->lookup(null, ['en'], false, 'en'));
+        $this->assertNull($this->locale->lookup('de', ['en', 'fr']));
+    }
+
+    public function testLookupSelectsFirstAllowedRegionForBaseLocale(): void
+    {
+        $this->assertSame('fr_CA', $this->locale->lookup('fr', ['en', 'fr_CA', 'fr_FR']));
     }
 }

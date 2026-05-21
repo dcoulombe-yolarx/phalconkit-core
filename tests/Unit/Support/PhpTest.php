@@ -59,6 +59,16 @@ class PhpTest extends AbstractUnit
         // Resetting for other tests
         unset($_SERVER['HTTPS'], $_SERVER['HTTP_X_FORWARDED_PROTO']);
     }
+
+    public function testTrustForwardedProtoAcceptsForwardedProtoListStartingWithHttps(): void
+    {
+        $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https,http';
+        Php::trustForwardedProto();
+
+        $this->assertSame('on', $_SERVER['HTTPS']);
+
+        unset($_SERVER['HTTPS'], $_SERVER['HTTP_X_FORWARDED_PROTO']);
+    }
     
     /**
      * Test to make sure trustForwardedProto method does not change $_SERVER['HTTPS']
@@ -85,6 +95,17 @@ class PhpTest extends AbstractUnit
         $this->assertArrayNotHasKey('HTTPS', $_SERVER);
         
         // Resetting for other tests
+        unset($_SERVER['HTTPS'], $_SERVER['HTTP_X_FORWARDED_PROTO']);
+    }
+
+    public function testTrustForwardedProtoIgnoresEmptyForwardedProto(): void
+    {
+        $_SERVER['HTTPS'] = 'off';
+        $_SERVER['HTTP_X_FORWARDED_PROTO'] = '';
+        Php::trustForwardedProto();
+
+        $this->assertSame('off', $_SERVER['HTTPS']);
+
         unset($_SERVER['HTTPS'], $_SERVER['HTTP_X_FORWARDED_PROTO']);
     }
     

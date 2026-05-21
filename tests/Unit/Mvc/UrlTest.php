@@ -49,4 +49,19 @@ class UrlTest extends AbstractUnit
             $this->assertEquals($result, $this->getUrl()->get($test));
         }
     }
+
+    public function testGetAbsolutePathNormalizesBackslashesDotsAndDuplicateSlashes(): void
+    {
+        $this->assertSame('/foo/baz', Url::getAbsolutePath('\\foo\\bar\\..\\baz'));
+        $this->assertSame('/foo/baz', Url::getAbsolutePath('/foo//./bar/../baz/'));
+        $this->assertSame('/', Url::getAbsolutePath('/foo/../../'));
+        $this->assertSame('/relative/path', Url::getAbsolutePath('relative/path'));
+    }
+
+    public function testGetAbsolutePathLeavesAbsoluteUrlsUntouched(): void
+    {
+        $this->assertSame('https://example.test/a/../b', Url::getAbsolutePath('https://example.test/a/../b'));
+        $this->assertSame('http://example.test/a/../b', Url::getAbsolutePath('http://example.test/a/../b'));
+        $this->assertSame('//example.test/a/../b', Url::getAbsolutePath('//example.test/a/../b'));
+    }
 }

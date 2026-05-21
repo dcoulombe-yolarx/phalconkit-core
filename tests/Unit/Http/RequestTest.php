@@ -98,6 +98,16 @@ class RequestTest extends AbstractUnit
         $this->assertTrue($this->request->isCors());
         $this->unsetServerValues();
     }
+
+    public function testSameOriginRequestIsNotCors(): void
+    {
+        $this->setServerValues('https://localhost');
+
+        $this->assertTrue($this->request->isSameOrigin());
+        $this->assertFalse($this->request->isCors());
+
+        $this->unsetServerValues();
+    }
     
     public function testIsPreflight(): void
     {
@@ -105,6 +115,17 @@ class RequestTest extends AbstractUnit
         
         $this->setServerValues('https://prefligh-origin');
         $this->assertTrue($this->request->isPreflight());
+        $this->unsetServerValues();
+    }
+
+    public function testCorsOptionsWithoutAccessControlRequestMethodIsNotPreflight(): void
+    {
+        $this->setServerValues('https://cors-origin');
+        unset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']);
+
+        $this->assertTrue($this->request->isCors());
+        $this->assertFalse($this->request->isPreflight());
+
         $this->unsetServerValues();
     }
     
