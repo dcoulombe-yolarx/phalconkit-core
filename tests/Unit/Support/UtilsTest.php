@@ -188,6 +188,23 @@ class UtilsTest extends AbstractUnit
         $this->assertIsString($memoryUsage['realMemory']);
         $this->assertIsString($memoryUsage['realMemoryPeak']);
     }
+
+    public function testGetMemoryUsageSupportsCustomDividerAndSuffix(): void
+    {
+        $memoryUsage = Utils::getMemoryUsage(1, ' bytes');
+
+        $this->assertSame([
+            'memory',
+            'memoryPeak',
+            'realMemory',
+            'realMemoryPeak',
+        ], array_keys($memoryUsage));
+
+        foreach ($memoryUsage as $value) {
+            $this->assertIsString($value);
+            $this->assertStringEndsWith(' bytes', $value);
+        }
+    }
     
     public function testGetShortName(): void
     {

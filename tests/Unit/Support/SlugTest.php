@@ -38,4 +38,29 @@ class SlugTest extends AbstractUnit
         
         $this->assertEquals('changed.delimiter', Slug::generate('Changed Delimiter', [], '.'));
     }
+
+    public function testGenerateAppliesCustomReplacementBeforeCleaning(): void
+    {
+        $this->assertSame('rock-and-tea', Slug::generate('Rock & Tea', [
+            '&' => 'and',
+        ]));
+
+        $this->assertSame('after_replace', Slug::generate('Before Replace', [
+            'Before' => 'After',
+        ], '_'));
+    }
+
+    public function testCleanStringNormalizesRepeatedSeparatorsWithCustomDelimiter(): void
+    {
+        $this->assertSame(
+            'alpha.beta.gamma',
+            Slug::cleanString(' Alpha   Beta / Gamma ', '.')
+        );
+    }
+
+    public function testCleanStringReturnsEmptyStringForEmptyOrSymbolOnlyInput(): void
+    {
+        $this->assertSame('', Slug::cleanString('', '-'));
+        $this->assertSame('', Slug::cleanString('!!!', '-'));
+    }
 }

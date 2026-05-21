@@ -36,7 +36,9 @@ with Phalcon Kit. Start with the task you are trying to complete.
    and WebSocket worker proxying.
 2. [Quality And Maintenance](quality-and-maintenance.md): local QA commands and
    CI expectations.
-3. [Release Process](release.md): release checklist and package-history notes.
+3. [Testing Roadmap](testing-roadmap.md): phased unit, component, integration,
+   model, eager-loading, and REST API test coverage plan.
+4. [Release Process](release.md): release checklist and package-history notes.
 
 ## I Am Using zemit-cms/core
 

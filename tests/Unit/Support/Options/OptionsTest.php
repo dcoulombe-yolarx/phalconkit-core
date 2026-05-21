@@ -66,4 +66,42 @@ class OptionsTest extends AbstractUnit
         $this->assertNull($this->options->getOption('new'));
         $this->assertEquals([], $this->options->getOptions());
     }
+
+    public function testSetOptionsCanMergeWithExistingOptions(): void
+    {
+        $this->options = new class ([
+            'first' => 'original',
+            'second' => 'kept',
+        ]) implements OptionsInterface {
+            use Options;
+        };
+
+        $this->options->setOptions([
+            'first' => 'changed',
+            'third' => 'added',
+        ], true);
+
+        $this->assertSame([
+            'first' => 'changed',
+            'second' => 'kept',
+            'third' => 'added',
+        ], $this->options->getOptions());
+    }
+
+    public function testSetOptionMergeKeepsOtherOptions(): void
+    {
+        $this->options = new class ([
+            'first' => 'original',
+            'second' => 'kept',
+        ]) implements OptionsInterface {
+            use Options;
+        };
+
+        $this->options->setOption('first', 'changed', true);
+
+        $this->assertSame([
+            'first' => 'changed',
+            'second' => 'kept',
+        ], $this->options->getOptions());
+    }
 }

@@ -54,7 +54,43 @@ class JsonTest extends AbstractUnit
         
         $this->assertTrue($this->json->validate($this->validation, 'field'));
         $this->assertCount(0, $this->validation->getMessages());
-        
-        // @todo add more json validations
+    }
+
+    public function testValidateAllowsEmptyValuesWhenConfigured(): void
+    {
+        $json = new Json(['allowEmpty' => true]);
+        $validation = new Validation();
+        $validation->add('field', $json);
+
+        $this->assertCount(0, $validation->validate(['field' => null]));
+        $this->assertTrue($json->validate($validation, 'field'));
+
+        $this->assertCount(0, $validation->validate(['field' => '']));
+        $this->assertTrue($json->validate($validation, 'field'));
+    }
+
+    public function testValidateRejectsNonStringAndMalformedJsonValues(): void
+    {
+        $json = new Json();
+        $validation = new Validation();
+        $validation->add('field', $json);
+
+        $this->assertCount(1, $validation->validate(['field' => ['not' => 'string']]));
+        $this->assertFalse($json->validate($validation, 'field'));
+
+        $this->assertCount(1, $validation->validate(['field' => '{"missing":']));
+        $this->assertFalse($json->validate($validation, 'field'));
+    }
+
+    public function testValidateAcceptsJsonScalarsArraysAndObjects(): void
+    {
+        $json = new Json();
+        $validation = new Validation();
+        $validation->add('field', $json);
+
+        foreach (['"string"', '123', 'true', '[]', '{"name":"Ada"}'] as $value) {
+            $this->assertCount(0, $validation->validate(['field' => $value]));
+            $this->assertTrue($json->validate($validation, 'field'));
+        }
     }
 }

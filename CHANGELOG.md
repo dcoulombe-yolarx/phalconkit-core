@@ -116,6 +116,11 @@ tag has been cut yet.
 - Clarified that legacy REST bridge traits shown in migration examples are
   app-owned compatibility code unless promoted into a small, opt-in, tested
   core compatibility namespace.
+- Added a phased testing roadmap for growing coverage from pure support units
+  through behavior, provider, REST, model, relationship, eager-loading, and
+  scaffolding tests.
+- Added direct low-level unit coverage for array helper, options, exposer,
+  filter sanitizer, validator, slug, and utility behavior.
 
 ### Changed
 

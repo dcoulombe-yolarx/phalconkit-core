@@ -54,7 +54,39 @@ class ColorTest extends AbstractUnit
         
         $this->assertTrue($this->color->validate($this->validation, 'field'));
         $this->assertCount(0, $this->validation->getMessages());
-        
-        // @todo add more color validations
+    }
+
+    public function testValidateAcceptsSupportedHexLengths(): void
+    {
+        $color = new Color();
+        $validation = new Validation();
+        $validation->add('field', $color);
+
+        foreach (['#fff', '#ffff', '#ffffff', '#ffffffff', '#Aa09Ff'] as $value) {
+            $this->assertCount(0, $validation->validate(['field' => $value]));
+            $this->assertTrue($color->validate($validation, 'field'));
+        }
+    }
+
+    public function testValidateRejectsUnsupportedHexFormats(): void
+    {
+        $color = new Color();
+        $validation = new Validation();
+        $validation->add('field', $color);
+
+        foreach (['fff', '#ff', '#fffff', '#ggg', '#fffffffff'] as $value) {
+            $this->assertCount(1, $validation->validate(['field' => $value]));
+            $this->assertFalse($color->validate($validation, 'field'));
+        }
+    }
+
+    public function testValidateRejectsNonStringValues(): void
+    {
+        $color = new Color();
+        $validation = new Validation();
+        $validation->add('field', $color);
+
+        $this->assertCount(1, $validation->validate(['field' => 123]));
+        $this->assertFalse($color->validate($validation, 'field'));
     }
 }
