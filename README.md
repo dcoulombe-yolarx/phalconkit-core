@@ -77,7 +77,7 @@ namespace App\Modules\Api\Controllers;
 
 use Phalcon\Support\Collection;
 
-final class ProjectController extends AbstractController
+final class FooBarController extends AbstractController
 {
     public function initializeSaveFields(): void
     {
@@ -176,6 +176,7 @@ IMAP, sockets, SimpleXML, and GD.
 - Run checks before release: [Quality And Maintenance](guides/quality-and-maintenance.md)
 - Use the bundled AI skills: [AI-Assisted Development](AI.md)
 - Migrate from the old package name: [Migration From zemit-cms/core](guides/migration-from-zemit.md)
+- Migrate old RESTful resources: [Migrate RESTful 0.x Resources To 1.x](guides/migration-restful-0x-to-1x.md)
 
 The full guide index is in [guides/README.md](guides/README.md).
 

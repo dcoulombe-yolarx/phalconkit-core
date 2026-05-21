@@ -85,6 +85,11 @@ At minimum, manually verify:
 - CLI tasks;
 - WebSocket worker, if used.
 
+If the application uses old 0.x RESTful controllers, migrate them with
+[Migrate RESTful 0.x Resources To 1.x](migration-restful-0x-to-1x.md). Keep the
+package rename and resource-controller migration as separate commits when
+possible.
+
 ## Recommended Migration Commit
 
 Keep the migration commit focused:

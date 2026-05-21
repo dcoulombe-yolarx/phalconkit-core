@@ -44,6 +44,10 @@ Read [Migration From zemit-cms/core](migration-from-zemit.md) before changing
 package constraints. The short version: new projects use `phalcon-kit/core`;
 older projects should stay pinned until the migration can be tested.
 
+If the application also uses old 0.x RESTful controllers, read
+[Migrate RESTful 0.x Resources To 1.x](migration-restful-0x-to-1x.md) for the
+controller, scaffolding, eager-loading, permission, and custom-action migration.
+
 ## Official Phalcon Docs
 
 Phalcon Kit extends Phalcon instead of replacing it. Use the official Phalcon

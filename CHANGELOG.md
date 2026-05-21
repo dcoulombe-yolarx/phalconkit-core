@@ -83,6 +83,39 @@ tag has been cut yet.
 - Linked the public README and guide index more explicitly to the bundled AI
   skill documentation and added AI/agent guidance to the documentation issue
   template.
+- Added a 0.x RESTful resource migration guide covering Phalcon DevTools model
+  generation to PhalconKit scaffolding, getter-based REST policies to
+  `initialize*()` policy collections, keyed joins, permission conditions,
+  eager-loading graphs, custom actions, and route/action mapping.
+- Expanded the RESTful migration guide with a temporary legacy bridge strategy
+  for old frontend action names, old getter methods, lifecycle-event adapters,
+  old `single`/`list` response keys, and staged controller migration.
+- Added app API base-controller migration guidance for moving shared
+  permission helpers, eager-loading helpers, transformer fallback, and
+  compatibility initialization from old Zemit controllers to PhalconKit
+  controllers.
+- Added concrete model migration guidance covering DevTools-era models,
+  generated abstracts/interfaces, default relationship/validation setup,
+  app-specific alias overrides, transform behaviors, typed constants, and
+  domain lifecycle hooks.
+- Added application config migration guidance for moving root config imports,
+  module constants, model mappings, provider overrides, permission fragments,
+  task permissions, integration settings, and secrets from Zemit-era config to
+  PhalconKit-era config.
+- Added permission-fragment migration guidance covering unified `components`,
+  condition-remover behavior classes, workflow-specific features, legacy action
+  names, direct model method permissions, and renamed domain models.
+- Expanded RESTful migration guidance with status/node model invariants,
+  metadata-derived nested save fields, and computed order aliases.
+- Expanded RESTful migration guidance with loader path normalization,
+  application/devtools bootstrap migration, app module base-class migration,
+  and simple-resource controller examples.
+- Expanded RESTful migration guidance with the actual 0.4.46 to dev-master
+  code gap, the improved event-driven behavior system, and the lean concrete
+  model pattern enabled by scaffolded abstracts/interfaces.
+- Clarified that legacy REST bridge traits shown in migration examples are
+  app-owned compatibility code unless promoted into a small, opt-in, tested
+  core compatibility namespace.
 
 ### Changed
 
